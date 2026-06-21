@@ -10,10 +10,14 @@ from unicommerce.exceptions import (
     UnicommerceError,
     ValidationError,
 )
+from unicommerce.async_client import AsyncUnicommerce
+from unicommerce.sync_client import Unicommerce
 
 __version__ = "0.1.0"
 
 __all__ = [
+    "AsyncUnicommerce",
+    "Unicommerce",
     "UnicommerceConfig",
     "UnicommerceError",
     "AuthenticationError",
