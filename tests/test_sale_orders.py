@@ -160,7 +160,9 @@ async def test_sale_order_cancel(client, httpx_mock, token_response):
 
 
 @pytest.mark.asyncio
-async def test_sale_order_get_sends_correct_body(client, httpx_mock, token_response, sale_order_response):
+async def test_sale_order_get_sends_correct_body(
+    client, httpx_mock, token_response, sale_order_response
+):
     """Test that the request body is formed correctly."""
     httpx_mock.add_response(
         method="GET",
@@ -180,6 +182,7 @@ async def test_sale_order_get_sends_correct_body(client, httpx_mock, token_respo
     # Second request is the sale order get (first is token)
     post_request = [r for r in requests if r.method == "POST"][0]
     import json
+
     body = json.loads(post_request.content)
     assert body["code"] == "SO-001"
     assert body["facilityCodes"] == ["FC-001", "FC-002"]

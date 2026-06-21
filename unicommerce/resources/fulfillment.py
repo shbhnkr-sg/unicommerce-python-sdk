@@ -1,10 +1,10 @@
-from unicommerce.resources.base import BaseResource, AsyncBaseResource
 from unicommerce.models.fulfillment import (
     InvoiceResponse,
-    ShippingPackageResponse,
     ShippingManifestResponse,
+    ShippingPackageResponse,
     TrackShipmentResponse,
 )
+from unicommerce.resources.base import AsyncBaseResource, BaseResource
 
 
 class AsyncFulfillment(AsyncBaseResource):
@@ -24,7 +24,9 @@ class AsyncFulfillment(AsyncBaseResource):
             safe_to_retry=True,
         )
 
-    async def create_shipping_package(self, sale_order_code: str, items: list) -> ShippingPackageResponse:
+    async def create_shipping_package(
+        self, sale_order_code: str, items: list
+    ) -> ShippingPackageResponse:
         return await self._transport.request(
             path="/oms/shippingPackage/create",
             body={"saleOrderCode": sale_order_code, "items": items},
@@ -40,7 +42,9 @@ class AsyncFulfillment(AsyncBaseResource):
             safe_to_retry=True,
         )
 
-    async def create_manifest(self, channel: str, shipping_provider: str) -> ShippingManifestResponse:
+    async def create_manifest(
+        self, channel: str, shipping_provider: str
+    ) -> ShippingManifestResponse:
         return await self._transport.request(
             path="/oms/shippingManifest/create",
             body={"channel": channel, "shippingProvider": shipping_provider},

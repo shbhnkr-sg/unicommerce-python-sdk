@@ -1,15 +1,14 @@
 import json
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
 
 import httpx
 import pytest
 from pydantic import BaseModel, ConfigDict
 
-from unicommerce.config import UnicommerceConfig
 from unicommerce.auth import AuthManager
+from unicommerce.config import UnicommerceConfig
+from unicommerce.exceptions import ApiError, ServerError
 from unicommerce.transport.async_transport import AsyncTransport
-from unicommerce.exceptions import ApiError, AuthenticationError, NetworkError, ServerError
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -51,6 +50,7 @@ def auth(config):
     auth_mgr._access_token = "valid-test-token"
     auth_mgr._refresh_token = "valid-refresh-token"
     import time
+
     auth_mgr._expires_at = time.monotonic() + 99999
     return auth_mgr
 
@@ -71,7 +71,9 @@ async def test_successful_request(transport, httpx_mock):
         json=response_data,
     )
 
-    result = await transport.request("/oms/order/get", body={"code": "SO-123"}, response_model=SampleResponse)
+    result = await transport.request(
+        "/oms/order/get", body={"code": "SO-123"}, response_model=SampleResponse
+    )
 
     assert isinstance(result, SampleResponse)
     assert result.successful is True
@@ -99,6 +101,7 @@ async def test_authentication_error_triggers_refresh(config, token_data, httpx_m
     """Mock 401 then 200, verify token refresh + replay."""
     auth = AuthManager(config)
     import time
+
     auth._access_token = "expired-token"
     auth._refresh_token = "old-refresh"
     auth._expires_at = time.monotonic() + 99999  # Token looks valid to _is_token_valid

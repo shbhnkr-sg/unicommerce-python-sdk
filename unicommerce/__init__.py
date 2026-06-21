@@ -1,3 +1,4 @@
+from unicommerce.async_client import AsyncUnicommerce
 from unicommerce.config import UnicommerceConfig
 from unicommerce.exceptions import (
     ApiError,
@@ -10,7 +11,6 @@ from unicommerce.exceptions import (
     UnicommerceError,
     ValidationError,
 )
-from unicommerce.async_client import AsyncUnicommerce
 from unicommerce.sync_client import Unicommerce
 
 __version__ = "0.1.0"

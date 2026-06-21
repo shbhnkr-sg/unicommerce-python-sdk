@@ -1,8 +1,8 @@
-from unicommerce.resources.base import BaseResource, AsyncBaseResource
 from unicommerce.models.export_jobs import (
     CreateExportJobRequest,
     ExportJobResponse,
 )
+from unicommerce.resources.base import AsyncBaseResource, BaseResource
 
 
 class AsyncExportJobs(AsyncBaseResource):

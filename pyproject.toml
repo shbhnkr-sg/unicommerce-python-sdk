@@ -21,3 +21,23 @@ dev = [
     "ruff>=0.4",
     "mypy>=1.10",
 ]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = false
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "unicommerce.resources.*"
+disable_error_code = ["return-value"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

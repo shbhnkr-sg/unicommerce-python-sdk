@@ -1,6 +1,6 @@
 from pydantic import Field
 
-from unicommerce.models.base import UnicommerceRequest, UnicommerceResponse
+from unicommerce.models.base import UnicommerceResponse
 
 
 class FacilityResponse(UnicommerceResponse):

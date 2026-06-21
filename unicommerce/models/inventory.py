@@ -26,4 +26,6 @@ class InventorySnapshotItem(UnicommerceResponse):
 
 
 class InventorySnapshotResponse(UnicommerceResponse):
-    inventory_items: list[InventorySnapshotItem] = Field(default_factory=list, alias="inventorySnapshots")
+    inventory_items: list[InventorySnapshotItem] = Field(
+        default_factory=list, alias="inventorySnapshots"
+    )

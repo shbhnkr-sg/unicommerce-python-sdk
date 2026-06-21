@@ -23,7 +23,9 @@ def test_hierarchy():
 
 
 def test_api_error_attributes():
-    err = ApiError("bad request", code=1001, errors=[{"field": "sku"}], warnings=[{"msg": "deprecated"}])
+    err = ApiError(
+        "bad request", code=1001, errors=[{"field": "sku"}], warnings=[{"msg": "deprecated"}]
+    )
     assert err.code == 1001
     assert err.errors == [{"field": "sku"}]
     assert err.warnings == [{"msg": "deprecated"}]

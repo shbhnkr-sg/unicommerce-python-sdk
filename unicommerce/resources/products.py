@@ -1,13 +1,15 @@
-from unicommerce.resources.base import BaseResource, AsyncBaseResource
 from unicommerce.models.products import (
     CreateProductRequest,
     ProductResponse,
     ProductSearchResponse,
 )
+from unicommerce.resources.base import AsyncBaseResource, BaseResource
 
 
 class AsyncProducts(AsyncBaseResource):
-    async def create(self, product: CreateProductRequest, *, facility: str | None = None) -> ProductResponse:
+    async def create(
+        self, product: CreateProductRequest, *, facility: str | None = None
+    ) -> ProductResponse:
         return await self._transport.request(
             path="/catalog/itemType/create",
             body=product,
@@ -42,7 +44,9 @@ class AsyncProducts(AsyncBaseResource):
 
 
 class Products(BaseResource):
-    def create(self, product: CreateProductRequest, *, facility: str | None = None) -> ProductResponse:
+    def create(
+        self, product: CreateProductRequest, *, facility: str | None = None
+    ) -> ProductResponse:
         return self._transport.request(
             path="/catalog/itemType/create",
             body=product,

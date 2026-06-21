@@ -23,7 +23,13 @@ class RateLimitError(UnicommerceError):
 
 
 class ApiError(UnicommerceError):
-    def __init__(self, message: str, code: int = 0, errors: list[dict] | None = None, warnings: list[dict] | None = None):
+    def __init__(
+        self,
+        message: str,
+        code: int = 0,
+        errors: list[dict] | None = None,
+        warnings: list[dict] | None = None,
+    ):
         super().__init__(message)
         self.code = code
         self.errors = errors or []

@@ -1,0 +1,21 @@
+{
+    "successful": true,
+    "message": "Sale order created successfully",
+    "errors": [],
+    "warnings": [],
+    "saleOrderDetailDTO": {
+        "code": "SO-002",
+        "displayOrderCode": "ORD-2024-002",
+        "displayOrderDateTime": "2024-01-16T14:00:00",
+        "channel": "SHOPIFY",
+        "status": "CREATED",
+        "cashOnDelivery": true,
+        "totalPrepaidAmount": 0,
+        "totalDiscount": 0,
+        "totalShippingCharges": 75.00,
+        "customerName": "New Customer",
+        "customerCode": "CUST-002",
+        "addresses": [],
+        "saleOrderItems": []
+    }
+}

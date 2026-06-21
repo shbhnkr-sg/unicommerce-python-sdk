@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from unicommerce.config import UnicommerceConfig
+from unicommerce._retry import compute_backoff
 from unicommerce.auth import AuthManager
+from unicommerce.config import UnicommerceConfig
 from unicommerce.exceptions import (
     ApiError,
     AuthenticationError,
@@ -9,10 +10,11 @@ from unicommerce.exceptions import (
     NetworkError,
     RateLimitError,
     ServerError,
-    TimeoutError as UCTimeoutError,
     ValidationError,
 )
-from unicommerce._retry import compute_backoff
+from unicommerce.exceptions import (
+    TimeoutError as UCTimeoutError,
+)
 
 
 class BaseTransport:
@@ -33,7 +35,13 @@ class BaseTransport:
             headers["Facility"] = effective_facility
         return headers
 
-    def _parse_response(self, status_code: int, data: dict, response_model: type | None, headers: dict | None = None):
+    def _parse_response(  # type: ignore[return]
+        self,
+        status_code: int,
+        data: dict,
+        response_model: type | None,
+        headers: dict | None = None,
+    ):
         if status_code == 401:
             raise AuthenticationError("Authentication failed")
         if status_code == 403:
@@ -66,7 +74,7 @@ class BaseTransport:
             return data
 
         # Validate into response model
-        model = response_model.model_validate(data)
+        model = response_model.model_validate(data)  # type: ignore[attr-defined]
         model._raw = data
         return model
 

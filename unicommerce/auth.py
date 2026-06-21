@@ -6,8 +6,8 @@ import time
 
 import httpx
 
-from unicommerce.config import UnicommerceConfig
 from unicommerce._logging import logger
+from unicommerce.config import UnicommerceConfig
 
 
 class AuthManager:
@@ -25,7 +25,7 @@ class AuthManager:
             and time.monotonic() < self._expires_at - self._config.token_refresh_buffer
         )
 
-    def _do_password_grant(self, client: httpx.Client | httpx.AsyncClient) -> dict:
+    def _do_password_grant(self, client: httpx.Client) -> dict:
         url = (
             f"{self._config.base_url}/oauth/token"
             f"?grant_type=password"
@@ -35,9 +35,9 @@ class AuthManager:
         )
         response = client.get(url)
         response.raise_for_status()
-        return response.json()
+        return response.json()  # type: ignore[no-any-return]
 
-    def _do_refresh_grant(self, client: httpx.Client | httpx.AsyncClient, refresh_token: str) -> dict:
+    def _do_refresh_grant(self, client: httpx.Client, refresh_token: str) -> dict:
         url = (
             f"{self._config.base_url}/oauth/token"
             f"?grant_type=refresh_token"
@@ -46,7 +46,7 @@ class AuthManager:
         )
         response = client.get(url)
         response.raise_for_status()
-        return response.json()
+        return response.json()  # type: ignore[no-any-return]
 
     def _store_token(self, data: dict) -> None:
         self._access_token = data["access_token"]
@@ -67,7 +67,7 @@ class AuthManager:
             )
             response = await client.get(url)
             response.raise_for_status()
-            return response.json()
+            return response.json()  # type: ignore[no-any-return]
 
     async def _async_refresh_grant(self, refresh_token: str) -> dict:
         async with httpx.AsyncClient(timeout=self._config.timeout) as client:
@@ -79,7 +79,7 @@ class AuthManager:
             )
             response = await client.get(url)
             response.raise_for_status()
-            return response.json()
+            return response.json()  # type: ignore[no-any-return]
 
     async def get_token(self) -> str:
         if self._is_token_valid():
@@ -112,7 +112,9 @@ class AuthManager:
                     self._store_token(data)
                     return self._access_token  # type: ignore
                 except (httpx.HTTPStatusError, httpx.HTTPError):
-                    logger.debug("Refresh grant failed during force_refresh, falling back to password grant")
+                    logger.debug(
+                        "Refresh grant failed during force_refresh, falling back to password grant"
+                    )
 
             data = await self._async_password_grant()
             self._store_token(data)
@@ -154,7 +156,10 @@ class AuthManager:
                         self._store_token(data)
                         return self._access_token  # type: ignore
                 except (httpx.HTTPStatusError, httpx.HTTPError):
-                    logger.debug("Refresh grant failed during force_refresh_sync, falling back to password grant")
+                    logger.debug(
+                        "Refresh grant failed during force_refresh_sync, "
+                        "falling back to password grant"
+                    )
 
             with httpx.Client(timeout=self._config.timeout) as client:
                 data = self._do_password_grant(client)

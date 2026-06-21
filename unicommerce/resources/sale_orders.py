@@ -1,14 +1,16 @@
-from unicommerce.resources.base import BaseResource, AsyncBaseResource
 from unicommerce.models.sale_orders import (
+    CancelResponse,
     CreateSaleOrderRequest,
     SaleOrderResponse,
     SaleOrderSearchResponse,
-    CancelResponse,
 )
+from unicommerce.resources.base import AsyncBaseResource, BaseResource
 
 
 class AsyncSaleOrders(AsyncBaseResource):
-    async def create(self, order: CreateSaleOrderRequest, *, facility: str | None = None) -> SaleOrderResponse:
+    async def create(
+        self, order: CreateSaleOrderRequest, *, facility: str | None = None
+    ) -> SaleOrderResponse:
         return await self._transport.request(
             path="/oms/saleOrder/create",
             body=order,
@@ -18,7 +20,7 @@ class AsyncSaleOrders(AsyncBaseResource):
         )
 
     async def get(self, code: str, *, facility_codes: list[str] | None = None) -> SaleOrderResponse:
-        body = {"code": code}
+        body: dict = {"code": code}
         if facility_codes:
             body["facilityCodes"] = facility_codes
         return await self._transport.request(
@@ -81,7 +83,9 @@ class AsyncSaleOrders(AsyncBaseResource):
 
 
 class SaleOrders(BaseResource):
-    def create(self, order: CreateSaleOrderRequest, *, facility: str | None = None) -> SaleOrderResponse:
+    def create(
+        self, order: CreateSaleOrderRequest, *, facility: str | None = None
+    ) -> SaleOrderResponse:
         return self._transport.request(
             path="/oms/saleOrder/create",
             body=order,
@@ -91,7 +95,7 @@ class SaleOrders(BaseResource):
         )
 
     def get(self, code: str, *, facility_codes: list[str] | None = None) -> SaleOrderResponse:
-        body = {"code": code}
+        body: dict = {"code": code}
         if facility_codes:
             body["facilityCodes"] = facility_codes
         return self._transport.request(

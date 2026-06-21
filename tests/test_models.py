@@ -4,8 +4,8 @@ import pytest
 from pydantic import ValidationError
 
 from unicommerce.models.base import UnicommerceRequest, UnicommerceResponse
-from unicommerce.models.sale_orders import SaleOrderResponse, Address, SaleOrderItem
 from unicommerce.models.inventory import AdjustInventoryRequest
+from unicommerce.models.sale_orders import SaleOrderResponse
 
 
 class TestUnicommerceRequest:

@@ -5,8 +5,8 @@ from pathlib import Path
 import httpx
 import pytest
 
-from unicommerce.config import UnicommerceConfig
 from unicommerce.auth import AuthManager
+from unicommerce.config import UnicommerceConfig
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -36,11 +36,11 @@ async def test_password_grant_success(config, token_data, httpx_mock):
     """Mock the OAuth endpoint, verify token is returned."""
     httpx_mock.add_response(
         url=httpx.URL(
-            f"https://testco.unicommerce.com/oauth/token"
-            f"?grant_type=password"
-            f"&client_id=my-trusted-client"
-            f"&username=admin@testco.com"
-            f"&password=secret123"
+            "https://testco.unicommerce.com/oauth/token"
+            "?grant_type=password"
+            "&client_id=my-trusted-client"
+            "&username=admin@testco.com"
+            "&password=secret123"
         ),
         method="GET",
         json=token_data,

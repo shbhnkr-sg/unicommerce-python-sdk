@@ -1,9 +1,9 @@
-from unicommerce.resources.base import BaseResource, AsyncBaseResource
 from unicommerce.models.returns import (
-    ReturnResponse,
     CreateReversePickupRequest,
+    ReturnResponse,
     ReversePickupResponse,
 )
+from unicommerce.resources.base import AsyncBaseResource, BaseResource
 
 
 class AsyncReturns(AsyncBaseResource):
@@ -15,7 +15,9 @@ class AsyncReturns(AsyncBaseResource):
             safe_to_retry=True,
         )
 
-    async def create_reverse_pickup(self, request: CreateReversePickupRequest) -> ReversePickupResponse:
+    async def create_reverse_pickup(
+        self, request: CreateReversePickupRequest
+    ) -> ReversePickupResponse:
         return await self._transport.request(
             path="/oms/return/createReversePickup",
             body=request,

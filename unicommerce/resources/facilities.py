@@ -1,8 +1,8 @@
-from unicommerce.resources.base import BaseResource, AsyncBaseResource
 from unicommerce.models.facilities import (
     FacilityResponse,
     FacilitySearchResponse,
 )
+from unicommerce.resources.base import AsyncBaseResource, BaseResource
 
 
 class AsyncFacilities(AsyncBaseResource):

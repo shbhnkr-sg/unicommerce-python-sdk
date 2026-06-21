@@ -1,5 +1,5 @@
-from unicommerce.transport.sync_transport import SyncTransport
 from unicommerce.transport.async_transport import AsyncTransport
+from unicommerce.transport.sync_transport import SyncTransport
 
 
 class BaseResource:

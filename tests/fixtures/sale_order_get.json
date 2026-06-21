@@ -1,0 +1,46 @@
+{
+    "successful": true,
+    "message": "Sale order fetched successfully",
+    "errors": [],
+    "warnings": [],
+    "saleOrderDTO": {
+        "code": "SO-001",
+        "displayOrderCode": "ORD-2024-001",
+        "displayOrderDateTime": "2024-01-15T10:30:00",
+        "channel": "AMAZON",
+        "status": "CREATED",
+        "cashOnDelivery": false,
+        "totalPrepaidAmount": 1500.00,
+        "totalDiscount": 100.00,
+        "totalShippingCharges": 50.00,
+        "customerName": "Test Customer",
+        "customerCode": "CUST-001",
+        "addresses": [
+            {
+                "id": 1,
+                "name": "Test Customer",
+                "addressLine1": "123 Test Street",
+                "addressLine2": "",
+                "city": "Mumbai",
+                "state": "Maharashtra",
+                "pincode": "400001",
+                "country": "IN",
+                "phone": "9999999999",
+                "email": "test@example.com"
+            }
+        ],
+        "saleOrderItems": [
+            {
+                "code": "SOI-001",
+                "itemSku": "SKU-100",
+                "itemName": "Test Product",
+                "sellingPrice": 1500.00,
+                "totalPrice": 1500.00,
+                "discount": 100.00,
+                "shippingCharges": 50.00,
+                "quantity": 1,
+                "statusCode": "CREATED"
+            }
+        ]
+    }
+}

@@ -5,13 +5,15 @@ import time
 import httpx
 from pydantic import BaseModel
 
-from unicommerce.transport.base import BaseTransport
+from unicommerce._logging import logger
 from unicommerce.exceptions import (
     AuthenticationError,
     NetworkError,
+)
+from unicommerce.exceptions import (
     TimeoutError as UCTimeoutError,
 )
-from unicommerce._logging import logger
+from unicommerce.transport.base import BaseTransport
 
 
 class SyncTransport(BaseTransport):
@@ -27,7 +29,7 @@ class SyncTransport(BaseTransport):
         facility: str | None = None,
         safe_to_retry: bool = False,
     ):
-        last_error = None
+        last_error: Exception | None = None
         auth_retried = False
 
         for attempt in range(self.config.max_retries + 1):
@@ -47,9 +49,7 @@ class SyncTransport(BaseTransport):
                 response = self._client.post(url, json=json_body, headers=headers)
                 data = response.json()
 
-                logger.debug(
-                    "POST %s -> %d (attempt %d)", path, response.status_code, attempt + 1
-                )
+                logger.debug("POST %s -> %d (attempt %d)", path, response.status_code, attempt + 1)
 
                 return self._parse_response(
                     response.status_code, data, response_model, headers=dict(response.headers)
@@ -75,9 +75,7 @@ class SyncTransport(BaseTransport):
 
             if last_error and self._should_retry(last_error, attempt, safe_to_retry):
                 delay = self._compute_backoff(attempt)
-                logger.warning(
-                    "Retrying %s (attempt %d) after %.2fs", path, attempt + 1, delay
-                )
+                logger.warning("Retrying %s (attempt %d) after %.2fs", path, attempt + 1, delay)
                 time.sleep(delay)
             elif last_error:
                 raise last_error
