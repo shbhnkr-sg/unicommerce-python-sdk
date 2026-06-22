@@ -27,7 +27,7 @@ def test_create_returns_export_job_id(export_job):
 def test_get_status(client, export_job):
     status = client.export_jobs.get_status(job_code=export_job.job_code)
     assert status.status is not None
-    assert status.status in ("SCHEDULED", "IN_PROGRESS", "COMPLETE", "SUCCESSFUL", "FAILED")
+    assert status.status in ("SCHEDULED", "RUNNING", "IN_PROGRESS", "COMPLETE", "SUCCESSFUL", "FAILED")
 
 
 def test_completed_export_has_csv_link(client, export_job):

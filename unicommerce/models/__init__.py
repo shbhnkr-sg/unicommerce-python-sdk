@@ -20,9 +20,6 @@ from unicommerce.models.fulfillment import (
     TrackShipmentResponse,
 )
 from unicommerce.models.inbound import (
-    CreateGrnRequest,
-    CreatePurchaseOrderRequest,
-    CreateVendorRequest,
     GrnResponse,
     PurchaseOrderResponse,
     VendorResponse,
@@ -37,8 +34,9 @@ from unicommerce.models.products import (
     ProductResponse,
 )
 from unicommerce.models.returns import (
-    CreateReversePickupRequest,
-    ReturnResponse,
+    ReturnGetResponse,
+    ReturnOrderSummary,
+    ReturnSearchResponse,
     ReversePickupResponse,
 )
 from unicommerce.models.sale_orders import (
@@ -72,14 +70,12 @@ __all__ = [
     "ShippingPackageResponse",
     "ShippingManifestResponse",
     "TrackShipmentResponse",
-    "CreateVendorRequest",
     "VendorResponse",
-    "CreatePurchaseOrderRequest",
     "PurchaseOrderResponse",
-    "CreateGrnRequest",
     "GrnResponse",
-    "ReturnResponse",
-    "CreateReversePickupRequest",
+    "ReturnGetResponse",
+    "ReturnSearchResponse",
+    "ReturnOrderSummary",
     "ReversePickupResponse",
     "FacilityResponse",
     "FacilitySearchResponse",
