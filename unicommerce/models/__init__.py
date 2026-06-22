@@ -5,7 +5,8 @@ from unicommerce.models.base import UnicommerceRequest, UnicommerceResponse
 from unicommerce.models.common import ApiErrorDetail, ApiWarning
 from unicommerce.models.export_jobs import (
     CreateExportJobRequest,
-    ExportJobResponse,
+    CreateExportJobResponse,
+    ExportJobStatusResponse,
 )
 from unicommerce.models.facilities import (
     FacilityResponse,
@@ -83,5 +84,6 @@ __all__ = [
     "FacilityResponse",
     "FacilitySearchResponse",
     "CreateExportJobRequest",
-    "ExportJobResponse",
+    "CreateExportJobResponse",
+    "ExportJobStatusResponse",
 ]
