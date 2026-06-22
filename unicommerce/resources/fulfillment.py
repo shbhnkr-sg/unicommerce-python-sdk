@@ -44,20 +44,29 @@ class AsyncFulfillment(AsyncBaseResource):
         )
 
     async def create_manifest(
-        self, channel: str, shipping_provider: str
+        self,
+        *,
+        channel: str,
+        third_party_shipping: bool,
+        shipping_provider_code: str | None = None,
+        **kwargs,
     ) -> ShippingManifestResponse:
+        body: dict = {"channel": channel, "thirdPartyShipping": third_party_shipping, **kwargs}
+        if shipping_provider_code is not None:
+            body["shippingProviderCode"] = shipping_provider_code
         return await self._transport.request(
             path="/oms/shippingManifest/create",
-            body={"channel": channel, "shippingProvider": shipping_provider},
+            body=body,
             response_model=ShippingManifestResponse,
             safe_to_retry=False,
         )
 
-    async def get_manifest(self, code: str) -> ShippingManifestResponse:
+    async def get_manifest(self, *, shipping_manifest_code: str) -> ShippingManifestResponse:
         return await self._transport.request(
             path="/oms/shippingManifest/get",
-            body={"code": code},
+            body={"shippingManifestCode": shipping_manifest_code},
             response_model=ShippingManifestResponse,
+            dto_key="shippingManifest",
             safe_to_retry=True,
         )
 
@@ -112,19 +121,30 @@ class Fulfillment(BaseResource):
             safe_to_retry=True,
         )
 
-    def create_manifest(self, channel: str, shipping_provider: str) -> ShippingManifestResponse:
+    def create_manifest(
+        self,
+        *,
+        channel: str,
+        third_party_shipping: bool,
+        shipping_provider_code: str | None = None,
+        **kwargs,
+    ) -> ShippingManifestResponse:
+        body: dict = {"channel": channel, "thirdPartyShipping": third_party_shipping, **kwargs}
+        if shipping_provider_code is not None:
+            body["shippingProviderCode"] = shipping_provider_code
         return self._transport.request(
             path="/oms/shippingManifest/create",
-            body={"channel": channel, "shippingProvider": shipping_provider},
+            body=body,
             response_model=ShippingManifestResponse,
             safe_to_retry=False,
         )
 
-    def get_manifest(self, code: str) -> ShippingManifestResponse:
+    def get_manifest(self, *, shipping_manifest_code: str) -> ShippingManifestResponse:
         return self._transport.request(
             path="/oms/shippingManifest/get",
-            body={"code": code},
+            body={"shippingManifestCode": shipping_manifest_code},
             response_model=ShippingManifestResponse,
+            dto_key="shippingManifest",
             safe_to_retry=True,
         )
 

@@ -58,16 +58,6 @@ class AsyncInventory(AsyncBaseResource):
             safe_to_retry=True,
         )
 
-    async def mark_found(
-        self, *, item_sku: str, quantity: int, shelf_code: str, facility: str | None = None
-    ) -> AdjustInventoryResponse:
-        return await self._transport.request(
-            path="/inventory/markFound",
-            body={"itemSKU": item_sku, "quantity": quantity, "shelfCode": shelf_code},
-            response_model=AdjustInventoryResponse,
-            facility=facility,
-            safe_to_retry=False,
-        )
 
 
 class Inventory(BaseResource):
@@ -122,13 +112,3 @@ class Inventory(BaseResource):
             safe_to_retry=True,
         )
 
-    def mark_found(
-        self, *, item_sku: str, quantity: int, shelf_code: str, facility: str | None = None
-    ) -> AdjustInventoryResponse:
-        return self._transport.request(
-            path="/inventory/markFound",
-            body={"itemSKU": item_sku, "quantity": quantity, "shelfCode": shelf_code},
-            response_model=AdjustInventoryResponse,
-            facility=facility,
-            safe_to_retry=False,
-        )

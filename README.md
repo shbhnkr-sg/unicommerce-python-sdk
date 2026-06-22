@@ -20,14 +20,19 @@ client = Unicommerce(
 )
 
 # Get a sale order
-order = client.sale_orders.get("SO-001")
+order = client.sale_orders.get(code="SO-001")
 print(order.status)
 
 # Search sale orders
 results = client.sale_orders.search(status="CREATED", channel="AMAZON")
 
 # Adjust inventory
-client.inventory.adjust(item_sku="SKU-100", quantity=10, facility="WAREHOUSE-1")
+client.inventory.adjust(
+    item_sku="SKU-100",
+    quantity=10,
+    shelf_code="DEFAULT",
+    adjustment_type="ADD",
+)
 
 client.close()
 ```
@@ -44,7 +49,7 @@ async def main():
         username="your-username",
         password="your-password",
     ) as client:
-        order = await client.sale_orders.get("SO-001")
+        order = await client.sale_orders.get(code="SO-001")
         print(order.status)
 
 asyncio.run(main())
@@ -80,8 +85,8 @@ except ApiError as e:
 | Resource | Description |
 |----------|-------------|
 | `client.sale_orders` | Create, get, search, cancel, edit, verify sale orders |
-| `client.inventory` | Adjust inventory, get snapshots, mark found |
-| `client.products` | Create, get, search product catalog |
+| `client.inventory` | Adjust inventory, get snapshots |
+| `client.products` | Get product catalog items |
 | `client.fulfillment` | Invoices, shipping packages, manifests, tracking |
 | `client.inbound` | Vendors, purchase orders, GRN management |
 | `client.returns` | Return processing and reverse pickups |

@@ -7,20 +7,26 @@ from unicommerce.resources.base import AsyncBaseResource, BaseResource
 
 class AsyncFacilities(AsyncBaseResource):
     async def search(
-        self, *, from_date: str, to_date: str, facility_status: str = "ALL"
+        self,
+        *,
+        from_date: str,
+        to_date: str,
+        date_type: str = "CREATED",
+        facility_status: str = "ALL",
     ) -> FacilitySearchResponse:
         return await self._transport.request(
             path="/facility/search",
             body={
                 "fromDate": from_date,
                 "toDate": to_date,
+                "dateType": date_type,
                 "facilityStatus": facility_status,
             },
             response_model=FacilitySearchResponse,
             safe_to_retry=True,
         )
 
-    async def get_details(self, facility_code: str) -> FacilityResponse:
+    async def get_details(self, *, facility_code: str) -> FacilityResponse:
         return await self._transport.request(
             path="/facility/get",
             body={"facilityCode": facility_code},
@@ -32,20 +38,26 @@ class AsyncFacilities(AsyncBaseResource):
 
 class Facilities(BaseResource):
     def search(
-        self, *, from_date: str, to_date: str, facility_status: str = "ALL"
+        self,
+        *,
+        from_date: str,
+        to_date: str,
+        date_type: str = "CREATED",
+        facility_status: str = "ALL",
     ) -> FacilitySearchResponse:
         return self._transport.request(
             path="/facility/search",
             body={
                 "fromDate": from_date,
                 "toDate": to_date,
+                "dateType": date_type,
                 "facilityStatus": facility_status,
             },
             response_model=FacilitySearchResponse,
             safe_to_retry=True,
         )
 
-    def get_details(self, facility_code: str) -> FacilityResponse:
+    def get_details(self, *, facility_code: str) -> FacilityResponse:
         return self._transport.request(
             path="/facility/get",
             body={"facilityCode": facility_code},

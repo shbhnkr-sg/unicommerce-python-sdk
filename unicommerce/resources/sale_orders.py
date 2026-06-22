@@ -39,10 +39,21 @@ class AsyncSaleOrders(AsyncBaseResource):
             safe_to_retry=True,
         )
 
-    async def cancel(self, code: str, *, items: list[str] | None = None) -> CancelResponse:
-        body: dict = {"code": code}
-        if items:
-            body["saleOrderItems"] = items
+    async def cancel(
+        self,
+        *,
+        sale_order_code: str,
+        sale_order_item_codes: list[str] | None = None,
+        cancellation_reason: str | None = None,
+        cancel_partially: bool | None = None,
+    ) -> CancelResponse:
+        body: dict = {"saleOrderCode": sale_order_code}
+        if sale_order_item_codes is not None:
+            body["saleOrderItemCodes"] = sale_order_item_codes
+        if cancellation_reason is not None:
+            body["cancellationReason"] = cancellation_reason
+        if cancel_partially is not None:
+            body["cancelPartially"] = cancel_partially
         return await self._transport.request(
             path="/oms/saleOrder/cancel",
             body=body,
@@ -50,35 +61,28 @@ class AsyncSaleOrders(AsyncBaseResource):
             safe_to_retry=False,
         )
 
-    async def edit(self, code: str, *, updates: dict) -> SaleOrderResponse:
+    async def edit(self, *, sale_order_code: str, addresses: list[dict], **kwargs) -> None:
+        body: dict = {"saleOrderAddress": {"saleOrderCode": sale_order_code, "addresses": addresses, **kwargs}}
         return await self._transport.request(
             path="/oms/saleOrder/edit",
-            body={"code": code, **updates},
-            response_model=SaleOrderResponse,
+            body=body,
+            response_model=None,
             safe_to_retry=False,
         )
 
-    async def verify(self, code: str) -> SaleOrderResponse:
+    async def verify(self, *, sale_order_code: str) -> None:
         return await self._transport.request(
             path="/oms/saleOrder/verify",
-            body={"code": code},
-            response_model=SaleOrderResponse,
+            body={"saleOrderCode": sale_order_code},
+            response_model=None,
             safe_to_retry=False,
         )
 
-    async def set_priority(self, code: str, priority: int) -> SaleOrderResponse:
+    async def set_priority(self, *, sale_order_code: str, priority: int) -> None:
         return await self._transport.request(
             path="/oms/saleOrder/setPriority",
-            body={"code": code, "priority": priority},
-            response_model=SaleOrderResponse,
-            safe_to_retry=False,
-        )
-
-    async def mark_returned(self, code: str) -> SaleOrderResponse:
-        return await self._transport.request(
-            path="/oms/saleOrder/markReturned",
-            body={"code": code},
-            response_model=SaleOrderResponse,
+            body={"saleOrderCode": sale_order_code, "priority": priority},
+            response_model=None,
             safe_to_retry=False,
         )
 
@@ -115,10 +119,21 @@ class SaleOrders(BaseResource):
             safe_to_retry=True,
         )
 
-    def cancel(self, code: str, *, items: list[str] | None = None) -> CancelResponse:
-        body: dict = {"code": code}
-        if items:
-            body["saleOrderItems"] = items
+    def cancel(
+        self,
+        *,
+        sale_order_code: str,
+        sale_order_item_codes: list[str] | None = None,
+        cancellation_reason: str | None = None,
+        cancel_partially: bool | None = None,
+    ) -> CancelResponse:
+        body: dict = {"saleOrderCode": sale_order_code}
+        if sale_order_item_codes is not None:
+            body["saleOrderItemCodes"] = sale_order_item_codes
+        if cancellation_reason is not None:
+            body["cancellationReason"] = cancellation_reason
+        if cancel_partially is not None:
+            body["cancelPartially"] = cancel_partially
         return self._transport.request(
             path="/oms/saleOrder/cancel",
             body=body,
@@ -126,34 +141,27 @@ class SaleOrders(BaseResource):
             safe_to_retry=False,
         )
 
-    def edit(self, code: str, *, updates: dict) -> SaleOrderResponse:
+    def edit(self, *, sale_order_code: str, addresses: list[dict], **kwargs) -> None:
+        body: dict = {"saleOrderAddress": {"saleOrderCode": sale_order_code, "addresses": addresses, **kwargs}}
         return self._transport.request(
             path="/oms/saleOrder/edit",
-            body={"code": code, **updates},
-            response_model=SaleOrderResponse,
+            body=body,
+            response_model=None,
             safe_to_retry=False,
         )
 
-    def verify(self, code: str) -> SaleOrderResponse:
+    def verify(self, *, sale_order_code: str) -> None:
         return self._transport.request(
             path="/oms/saleOrder/verify",
-            body={"code": code},
-            response_model=SaleOrderResponse,
+            body={"saleOrderCode": sale_order_code},
+            response_model=None,
             safe_to_retry=False,
         )
 
-    def set_priority(self, code: str, priority: int) -> SaleOrderResponse:
+    def set_priority(self, *, sale_order_code: str, priority: int) -> None:
         return self._transport.request(
             path="/oms/saleOrder/setPriority",
-            body={"code": code, "priority": priority},
-            response_model=SaleOrderResponse,
-            safe_to_retry=False,
-        )
-
-    def mark_returned(self, code: str) -> SaleOrderResponse:
-        return self._transport.request(
-            path="/oms/saleOrder/markReturned",
-            body={"code": code},
-            response_model=SaleOrderResponse,
+            body={"saleOrderCode": sale_order_code, "priority": priority},
+            response_model=None,
             safe_to_retry=False,
         )
