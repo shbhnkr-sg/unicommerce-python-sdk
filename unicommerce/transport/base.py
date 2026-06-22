@@ -55,8 +55,8 @@ class BaseTransport:
                     pass
             raise RateLimitError("Rate limit exceeded", retry_after=retry_after)
         if status_code == 400:
-            errors = data.get("errors", [])
-            message = data.get("message", "Validation error")
+            errors = data.get("errors") or []
+            message = data.get("message") or "Validation error"
             raise ValidationError(message, errors=errors)
         if 500 <= status_code <= 599:
             raise ServerError(f"Server error: {status_code}", status_code=status_code)
@@ -64,10 +64,10 @@ class BaseTransport:
         # Check for logical API failure on 200
         if data.get("successful") is False:
             raise ApiError(
-                message=data.get("message", "API request failed"),
+                message=data.get("message") or "API request failed",
                 code=data.get("code", 0),
-                errors=data.get("errors", []),
-                warnings=data.get("warnings", []),
+                errors=data.get("errors") or [],
+                warnings=data.get("warnings") or [],
             )
 
         if response_model is None:

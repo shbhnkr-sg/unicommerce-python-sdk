@@ -28,18 +28,27 @@ def token_response():
 def sale_order_response():
     return {
         "successful": True,
-        "message": "Sale order fetched successfully",
+        "message": None,
+        "errors": None,
+        "warnings": None,
         "code": "SO-001",
         "displayOrderCode": "ORD-001",
-        "displayOrderDateTime": "2024-01-15T10:30:00",
+        "displayOrderDateTime": 1705312200000,
         "channel": "CUSTOM",
+        "source": "API",
         "status": "CREATED",
-        "cashOnDelivery": False,
-        "totalPrepaidAmount": 1500.0,
+        "cod": False,
+        "priority": 0,
+        "currencyCode": "INR",
         "totalDiscount": 100.0,
         "totalShippingCharges": 50.0,
-        "customerName": "John Doe",
         "customerCode": "CUST-001",
+        "notificationEmail": "john@example.com",
+        "notificationMobile": "9876543210",
+        "created": 1705312200000,
+        "updated": 1705312200000,
+        "fulfillmentTat": None,
+        "thirdPartyShipping": False,
         "addresses": [],
         "saleOrderItems": [
             {
@@ -81,10 +90,10 @@ async def test_sale_order_get(client, httpx_mock, token_response, sale_order_res
     assert result.display_order_code == "ORD-001"
     assert result.channel == "CUSTOM"
     assert result.status == "CREATED"
-    assert result.customer_name == "John Doe"
-    assert result.cash_on_delivery is False
-    assert result.total_prepaid_amount == 1500.0
+    assert result.customer_code == "CUST-001"
+    assert result.cod is False
     assert result.total_discount == 100.0
+    assert result.display_order_date_time == 1705312200000
     assert len(result.sale_order_items) == 1
     assert result.sale_order_items[0].item_sku == "SKU-ABC"
     assert result.sale_order_items[0].quantity == 1
@@ -105,9 +114,11 @@ async def test_sale_order_search(client, httpx_mock, token_response, sale_order_
 
     search_response = {
         "successful": True,
-        "message": "Search completed",
+        "message": None,
+        "errors": None,
+        "warnings": None,
         "elements": [sale_order_response],
-        "totalCount": 1,
+        "totalRecords": 1,
     }
 
     httpx_mock.add_response(
@@ -119,7 +130,7 @@ async def test_sale_order_search(client, httpx_mock, token_response, sale_order_
     result = await client.sale_orders.search(status="CREATED")
 
     assert isinstance(result, SaleOrderSearchResponse)
-    assert result.total_count == 1
+    assert result.total_records == 1
     assert len(result.sale_orders) == 1
     assert result.sale_orders[0].code == "SO-001"
 
@@ -140,6 +151,8 @@ async def test_sale_order_cancel(client, httpx_mock, token_response):
     cancel_response = {
         "successful": True,
         "message": "Cancelled",
+        "errors": None,
+        "warnings": None,
         "code": "SO-001",
         "status": "CANCELLED",
     }

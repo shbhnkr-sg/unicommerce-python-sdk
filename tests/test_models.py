@@ -63,18 +63,25 @@ class TestSaleOrderResponse:
         data = {
             "code": "SO-001",
             "displayOrderCode": "ORD-001",
-            "displayOrderDateTime": "2024-01-15T10:30:00",
+            "displayOrderDateTime": 1705312200000,
             "channel": "SHOPIFY",
+            "source": "API",
             "status": "CREATED",
-            "cashOnDelivery": True,
-            "totalPrepaidAmount": 100.50,
+            "cod": True,
+            "priority": 0,
+            "currencyCode": "INR",
             "totalDiscount": 10.0,
             "totalShippingCharges": 5.0,
-            "customerName": "John Doe",
             "customerCode": "CUST-001",
+            "notificationEmail": "john@example.com",
+            "notificationMobile": "9876543210",
+            "created": 1705312200000,
+            "updated": 1705312200000,
+            "fulfillmentTat": 1705571400000,
+            "thirdPartyShipping": False,
             "addresses": [
                 {
-                    "id": 1,
+                    "id": "1",
                     "name": "John Doe",
                     "addressLine1": "123 Main St",
                     "addressLine2": "Apt 4",
@@ -105,10 +112,12 @@ class TestSaleOrderResponse:
 
         assert order.code == "SO-001"
         assert order.display_order_code == "ORD-001"
+        assert order.display_order_date_time == 1705312200000
         assert order.channel == "SHOPIFY"
-        assert order.cash_on_delivery is True
-        assert order.total_prepaid_amount == 100.50
-        assert order.customer_name == "John Doe"
+        assert order.cod is True
+        assert order.priority == 0
+        assert order.currency_code == "INR"
+        assert order.customer_code == "CUST-001"
         assert len(order.addresses) == 1
         assert order.addresses[0].city == "Mumbai"
         assert order.addresses[0].address_line1 == "123 Main St"
@@ -117,13 +126,13 @@ class TestSaleOrderResponse:
         assert order.sale_order_items[0].status == "CREATED"
 
     def test_default_values(self):
-        """SaleOrderResponse should have sensible defaults."""
+        """SaleOrderResponse should have sensible defaults (all None)."""
         order = SaleOrderResponse()
-        assert order.code == ""
-        assert order.cash_on_delivery is False
-        assert order.total_discount == 0
-        assert order.addresses == []
-        assert order.sale_order_items == []
+        assert order.code is None
+        assert order.cod is None
+        assert order.total_discount is None
+        assert order.addresses is None
+        assert order.sale_order_items is None
 
     def test_allows_extra_fields(self):
         """SaleOrderResponse should allow extra unknown fields from API."""

@@ -113,7 +113,7 @@ class TestErrorHandlingFlow:
             "message": "Sale order not found",
             "code": 1001,
             "errors": [{"code": "NOT_FOUND", "message": "Order does not exist"}],
-            "warnings": [],
+            "warnings": None,
         }
         httpx_mock.add_response(
             url="https://testtenant.unicommerce.com/services/rest/v1/oms/saleorder/get",
