@@ -26,8 +26,10 @@ dependencies = [
     "pydantic>=2.0",
 ]
 
-# [project.urls]
-# Set these after creating the GitHub repo
+[project.urls]
+Homepage = "https://github.com/shbhnkr-sg/unicommerce-python-sdk"
+Repository = "https://github.com/shbhnkr-sg/unicommerce-python-sdk"
+Issues = "https://github.com/shbhnkr-sg/unicommerce-python-sdk/issues"
 
 [project.optional-dependencies]
 dev = [
