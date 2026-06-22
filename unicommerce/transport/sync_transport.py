@@ -13,6 +13,7 @@ from unicommerce.exceptions import (
 from unicommerce.exceptions import (
     TimeoutError as UCTimeoutError,
 )
+from unicommerce.models.pdf import PdfResponse
 from unicommerce.transport.base import BaseTransport
 
 
@@ -82,6 +83,30 @@ class SyncTransport(BaseTransport):
                 raise last_error
 
         raise last_error  # type: ignore
+
+    def get_pdf(
+        self,
+        path: str,
+        params: dict,
+        facility: str | None = None,
+    ) -> PdfResponse:
+        token = self._auth.get_token_sync()
+        headers = self._build_headers(token, facility)
+        headers.pop("Content-Type", None)
+        url = self._build_url(path)
+
+        response = self._client.get(url, params=params, headers=headers)
+
+        if response.status_code == 401:
+            self._auth.force_refresh_sync()
+            token = self._auth.get_token_sync()
+            headers["Authorization"] = f"Bearer {token}"
+            response = self._client.get(url, params=params, headers=headers)
+
+        if response.status_code != 200:
+            self._parse_response(response.status_code, response.json(), None)
+
+        return PdfResponse(response.content)
 
     def close(self):
         self._client.close()

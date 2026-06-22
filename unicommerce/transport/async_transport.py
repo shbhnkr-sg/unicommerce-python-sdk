@@ -13,6 +13,7 @@ from unicommerce.exceptions import (
 from unicommerce.exceptions import (
     TimeoutError as UCTimeoutError,
 )
+from unicommerce.models.pdf import PdfResponse
 from unicommerce.transport.base import BaseTransport
 
 
@@ -82,6 +83,30 @@ class AsyncTransport(BaseTransport):
                 raise last_error
 
         raise last_error  # type: ignore
+
+    async def get_pdf(
+        self,
+        path: str,
+        params: dict,
+        facility: str | None = None,
+    ) -> PdfResponse:
+        token = await self._auth.get_token()
+        headers = self._build_headers(token, facility)
+        headers.pop("Content-Type", None)
+        url = self._build_url(path)
+
+        response = await self._client.get(url, params=params, headers=headers)
+
+        if response.status_code == 401:
+            await self._auth.force_refresh()
+            token = await self._auth.get_token()
+            headers["Authorization"] = f"Bearer {token}"
+            response = await self._client.get(url, params=params, headers=headers)
+
+        if response.status_code != 200:
+            self._parse_response(response.status_code, response.json(), None)
+
+        return PdfResponse(response.content)
 
     async def close(self):
         await self._client.aclose()

@@ -8,7 +8,7 @@ A modern, async-first Python SDK for the [Unicommerce](https://www.unicommerce.c
 - OAuth 2.0 with automatic token refresh
 - Retry with exponential backoff
 - Custom exception hierarchy
-- **98 API methods** across 9 resource domains
+- **100 API methods** across 9 resource domains
 
 ## Installation
 
@@ -203,7 +203,7 @@ client.products.create_channel_item_type(
 )
 ```
 
-### Fulfillment (30 methods)
+### Fulfillment (32 methods)
 
 ```python
 # --- Shipping Packages ---
@@ -262,6 +262,15 @@ client.fulfillment.create_invoice_with_details(
     sale_order_code="SO-12345",
     invoice={"invoiceDate": "2026-06-21"},
 )
+
+# Download invoice as PDF
+pdf = client.fulfillment.get_invoice_pdf(invoice_codes=["INV-001"])
+pdf.save("invoice.pdf")         # save to file
+raw_bytes = pdf.content          # or access raw bytes
+
+# Download shipping label as PDF
+label_pdf = client.fulfillment.get_shipping_label_pdf(shipping_package_codes=["SP-001"])
+label_pdf.save("label.pdf")
 
 # Create invoice and allocate shipping provider
 client.fulfillment.create_invoice_and_allocate_provider(shipping_package_code="SP-001")

@@ -1,4 +1,5 @@
 from unicommerce.models.base import UnicommerceResponse
+from unicommerce.models.pdf import PdfResponse
 from unicommerce.models.fulfillment import (
     CreateInvoiceAndLabelResponse,
     CreateShippingPackageResponse,
@@ -238,8 +239,17 @@ class AsyncFulfillment(AsyncBaseResource):
             safe_to_retry=False,
         )
 
-    # get_invoice_pdf: GET request returning PDF binary - needs special handling
-    # get_shipping_label_pdf: GET request returning PDF binary - needs special handling
+    async def get_invoice_pdf(self, *, invoice_codes: list[str]) -> PdfResponse:
+        return await self._transport.get_pdf(
+            path="/oms/invoice/show",
+            params={"invoiceCodes": ",".join(invoice_codes)},
+        )
+
+    async def get_shipping_label_pdf(self, *, shipping_package_codes: list[str]) -> PdfResponse:
+        return await self._transport.get_pdf(
+            path="/oms/shipment/show",
+            params={"shippingPackageCodes": ",".join(shipping_package_codes)},
+        )
 
     async def check_serviceability(
         self, *, pincode: str, cash_on_delivery: bool,
@@ -659,8 +669,17 @@ class Fulfillment(BaseResource):
             safe_to_retry=False,
         )
 
-    # get_invoice_pdf: GET request returning PDF binary - needs special handling
-    # get_shipping_label_pdf: GET request returning PDF binary - needs special handling
+    def get_invoice_pdf(self, *, invoice_codes: list[str]) -> PdfResponse:
+        return self._transport.get_pdf(
+            path="/oms/invoice/show",
+            params={"invoiceCodes": ",".join(invoice_codes)},
+        )
+
+    def get_shipping_label_pdf(self, *, shipping_package_codes: list[str]) -> PdfResponse:
+        return self._transport.get_pdf(
+            path="/oms/shipment/show",
+            params={"shippingPackageCodes": ",".join(shipping_package_codes)},
+        )
 
     def check_serviceability(
         self, *, pincode: str, cash_on_delivery: bool,

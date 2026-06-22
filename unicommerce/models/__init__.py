@@ -3,6 +3,7 @@
 from unicommerce.models.auth import TokenResponse
 from unicommerce.models.base import UnicommerceRequest, UnicommerceResponse
 from unicommerce.models.common import ApiErrorDetail, ApiWarning
+from unicommerce.models.pdf import PdfResponse
 from unicommerce.models.export_jobs import (
     CreateExportJobRequest,
     CreateExportJobResponse,
@@ -78,6 +79,7 @@ __all__ = [
     "ApiErrorDetail",
     "ApiWarning",
     "TokenResponse",
+    "PdfResponse",
     "Address",
     "SaleOrderItem",
     "CreateSaleOrderRequest",
