@@ -28,6 +28,7 @@ class AsyncSaleOrders(AsyncBaseResource):
             body=body,
             response_model=SaleOrderResponse,
             safe_to_retry=True,
+            dto_key="saleOrderDTO",
         )
 
     async def search(self, **filters) -> SaleOrderSearchResponse:
@@ -103,6 +104,7 @@ class SaleOrders(BaseResource):
             body=body,
             response_model=SaleOrderResponse,
             safe_to_retry=True,
+            dto_key="saleOrderDTO",
         )
 
     def search(self, **filters) -> SaleOrderSearchResponse:

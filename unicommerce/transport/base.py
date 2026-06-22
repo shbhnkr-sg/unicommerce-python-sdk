@@ -41,6 +41,7 @@ class BaseTransport:
         data: dict,
         response_model: type | None,
         headers: dict | None = None,
+        dto_key: str | None = None,
     ):
         if status_code == 401:
             raise AuthenticationError("Authentication failed")
@@ -73,8 +74,13 @@ class BaseTransport:
         if response_model is None:
             return data
 
+        # Extract the DTO if key is provided
+        model_data = data
+        if dto_key and dto_key in data:
+            model_data = data[dto_key]
+
         # Validate into response model
-        model = response_model.model_validate(data)  # type: ignore[attr-defined]
+        model = response_model.model_validate(model_data)  # type: ignore[attr-defined]
         model._raw = data
         return model
 

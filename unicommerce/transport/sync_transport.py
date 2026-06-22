@@ -28,6 +28,7 @@ class SyncTransport(BaseTransport):
         response_model=None,
         facility: str | None = None,
         safe_to_retry: bool = False,
+        dto_key: str | None = None,
     ):
         last_error: Exception | None = None
         auth_retried = False
@@ -52,7 +53,7 @@ class SyncTransport(BaseTransport):
                 logger.debug("POST %s -> %d (attempt %d)", path, response.status_code, attempt + 1)
 
                 return self._parse_response(
-                    response.status_code, data, response_model, headers=dict(response.headers)
+                    response.status_code, data, response_model, headers=dict(response.headers), dto_key=dto_key
                 )
 
             except AuthenticationError:
