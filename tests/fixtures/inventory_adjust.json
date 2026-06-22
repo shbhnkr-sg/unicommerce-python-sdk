@@ -1,8 +1,0 @@
-{
-    "successful": true,
-    "message": "Inventory adjusted successfully",
-    "errors": [],
-    "warnings": [],
-    "itemSKU": "SKU-100",
-    "quantity": 10
-}

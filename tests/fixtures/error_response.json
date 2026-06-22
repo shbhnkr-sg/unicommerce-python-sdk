@@ -1,6 +1,0 @@
-{
-    "successful": false,
-    "message": "Sale order not found",
-    "errors": [{"code": 40001, "message": "No sale order exists with code SO-999", "description": ""}],
-    "warnings": []
-}
