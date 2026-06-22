@@ -13,11 +13,13 @@ from unicommerce.models.facilities import (
     FacilitySearchResponse,
 )
 from unicommerce.models.fulfillment import (
-    CreateInvoiceRequest,
-    InvoiceResponse,
+    CreateInvoiceAndLabelResponse,
+    CreateShippingPackageResponse,
+    GetInvoiceDetailResponse,
+    InvoiceLabelResponse,
     ShippingManifestResponse,
     ShippingPackageResponse,
-    TrackShipmentResponse,
+    UpdateTrackingStatusResponse,
 )
 from unicommerce.models.inbound import (
     GrnResponse,
@@ -65,11 +67,13 @@ __all__ = [
     "InventorySnapshotItem",
     "InventorySnapshotResponse",
     "ProductResponse",
-    "CreateInvoiceRequest",
-    "InvoiceResponse",
+    "GetInvoiceDetailResponse",
+    "InvoiceLabelResponse",
+    "CreateInvoiceAndLabelResponse",
+    "CreateShippingPackageResponse",
     "ShippingPackageResponse",
     "ShippingManifestResponse",
-    "TrackShipmentResponse",
+    "UpdateTrackingStatusResponse",
     "VendorResponse",
     "PurchaseOrderResponse",
     "GrnResponse",
