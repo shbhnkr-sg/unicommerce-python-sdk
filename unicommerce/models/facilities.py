@@ -4,13 +4,20 @@ from unicommerce.models.base import UnicommerceResponse
 
 
 class FacilityResponse(UnicommerceResponse):
-    code: str = Field("", alias="code")
-    name: str = Field("", alias="name")
-    city: str = Field("", alias="city")
-    state: str = Field("", alias="state")
-    country: str = Field("", alias="country")
-    enabled: bool = Field(True, alias="enabled")
+    type: str | None = Field(None, alias="type")
+    display_name: str | None = Field(None, alias="displayName")
+    operational_type: str | None = Field(None, alias="operationalType")
+    name: str | None = Field(None, alias="name")
+    code: str | None = Field(None, alias="code")
+    alternate_code: str | None = Field(None, alias="alternateCode")
+    pan: str | None = Field(None, alias="pan")
+    gst_number: str | None = Field(None, alias="gstNumber")
+    enabled: bool | None = Field(None, alias="enabled")
+    tax_exempted: bool | None = Field(None, alias="taxExempted")
+    website: str | None = Field(None, alias="website")
+    billing_address: dict | None = Field(None, alias="billingAddress")
+    shipping_address: dict | None = Field(None, alias="shippingAddress")
 
 
 class FacilitySearchResponse(UnicommerceResponse):
-    facilities: list[FacilityResponse] = Field(default_factory=list, alias="elements")
+    parties: list[FacilityResponse] | None = Field(None, alias="parties")

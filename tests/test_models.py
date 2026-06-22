@@ -206,3 +206,33 @@ class TestAdjustInventoryRequest:
         # Keys should be camelCase
         assert "item_sku" not in output_data
         assert "shelf_code" not in output_data
+
+
+class TestInventorySnapshotItem:
+    """Tests for InventorySnapshotItem model with real API fields."""
+
+    def test_create_from_api_response(self):
+        """InventorySnapshotItem should parse real API response fields."""
+        from unicommerce.models.inventory import InventorySnapshotItem
+
+        data = {
+            "itemTypeSKU": "SKU-100",
+            "inventory": 50,
+            "openSale": 5,
+            "openPurchase": 0,
+            "putawayPending": 0,
+            "inventoryBlocked": 0,
+            "pendingStockTransfer": 0,
+            "vendorInventory": 0,
+            "virtualInventory": 45,
+            "pendingInventoryAssessment": 0,
+            "badInventory": 2,
+        }
+
+        item = InventorySnapshotItem.model_validate(data)
+
+        assert item.item_type_sku == "SKU-100"
+        assert item.inventory == 50
+        assert item.open_sale == 5
+        assert item.virtual_inventory == 45
+        assert item.bad_inventory == 2

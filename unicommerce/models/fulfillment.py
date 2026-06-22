@@ -15,11 +15,20 @@ class InvoiceResponse(UnicommerceResponse):
 
 
 class ShippingPackageResponse(UnicommerceResponse):
-    code: str = Field("", alias="code")
-    status: str = Field("", alias="status")
-    shipping_provider: str = Field("", alias="shippingProvider")
-    tracking_number: str = Field("", alias="trackingNumber")
-    invoice_code: str = Field("", alias="invoiceCode")
+    code: str | None = Field(None, alias="code")
+    channel_shipment_code: str | None = Field(None, alias="channelShipmentCode")
+    sale_order_code: str | None = Field(None, alias="saleOrderCode")
+    status_code: str | None = Field(None, alias="statusCode")
+    shipping_manifest_code: str | None = Field(None, alias="shippingManifestCode")
+    actual_weight: float | None = Field(None, alias="actualWeight")
+    box_width: int | None = Field(None, alias="boxWidth")
+    box_height: int | None = Field(None, alias="boxHeight")
+    box_length: int | None = Field(None, alias="boxLength")
+    number_of_boxes: int | None = Field(None, alias="numberOfBoxes")
+    collectable_amount: float | None = Field(None, alias="collectableAmount")
+    shipping_provider: str | None = Field(None, alias="shippingProvider")
+    tracking_number: str | None = Field(None, alias="trackingNumber")
+    tracking_link: str | None = Field(None, alias="trackingLink")
 
 
 class ShippingManifestResponse(UnicommerceResponse):

@@ -38,8 +38,6 @@ async def test_inventory_adjust(client, httpx_mock, token_response):
     adjust_response = {
         "successful": True,
         "message": "Inventory adjusted",
-        "itemSKU": "SKU1",
-        "quantity": 5,
     }
 
     httpx_mock.add_response(
@@ -56,8 +54,6 @@ async def test_inventory_adjust(client, httpx_mock, token_response):
     )
 
     assert isinstance(result, AdjustInventoryResponse)
-    assert result.item_sku == "SKU1"
-    assert result.quantity == 5
 
     await client.close()
 
@@ -74,8 +70,6 @@ async def test_inventory_adjust_sends_correct_body(client, httpx_mock, token_res
     adjust_response = {
         "successful": True,
         "message": "Inventory adjusted",
-        "itemSKU": "SKU1",
-        "quantity": 10,
     }
 
     httpx_mock.add_response(
@@ -121,8 +115,6 @@ async def test_inventory_adjust_with_facility(client, httpx_mock, token_response
     adjust_response = {
         "successful": True,
         "message": "Inventory adjusted",
-        "itemSKU": "SKU1",
-        "quantity": 5,
     }
 
     httpx_mock.add_response(
@@ -148,7 +140,7 @@ async def test_inventory_adjust_with_facility(client, httpx_mock, token_response
 
 @pytest.mark.asyncio
 async def test_inventory_get_snapshot(client, httpx_mock, token_response):
-    """Test that inventory.get_snapshot returns InventorySnapshotResponse."""
+    """Test that inventory.get_snapshot returns InventorySnapshotResponse with real API fields."""
     httpx_mock.add_response(
         method="GET",
         url="https://testco.unicommerce.com/oauth/token?grant_type=password&client_id=my-trusted-client&username=admin@testco.com&password=secret123",
@@ -160,16 +152,30 @@ async def test_inventory_get_snapshot(client, httpx_mock, token_response):
         "message": "Snapshot fetched",
         "inventorySnapshots": [
             {
-                "itemSKU": "SKU1",
-                "shelfCode": "A1",
-                "quantity": 50,
-                "inventoryType": "GOOD_INVENTORY",
+                "itemTypeSKU": "SKU1",
+                "inventory": 50,
+                "openSale": 5,
+                "openPurchase": 0,
+                "putawayPending": 0,
+                "inventoryBlocked": 0,
+                "pendingStockTransfer": 0,
+                "vendorInventory": 0,
+                "virtualInventory": 45,
+                "pendingInventoryAssessment": 0,
+                "badInventory": 2,
             },
             {
-                "itemSKU": "SKU1",
-                "shelfCode": "B1",
-                "quantity": 10,
-                "inventoryType": "BAD_INVENTORY",
+                "itemTypeSKU": "SKU2",
+                "inventory": 10,
+                "openSale": 1,
+                "openPurchase": 0,
+                "putawayPending": 0,
+                "inventoryBlocked": 0,
+                "pendingStockTransfer": 0,
+                "vendorInventory": 0,
+                "virtualInventory": 9,
+                "pendingInventoryAssessment": 0,
+                "badInventory": 0,
             },
         ],
     }
@@ -180,12 +186,21 @@ async def test_inventory_get_snapshot(client, httpx_mock, token_response):
         json=snapshot_response,
     )
 
-    result = await client.inventory.get_snapshot(item_sku="SKU1")
+    result = await client.inventory.get_snapshot(updated_since_in_minutes=30)
 
     assert isinstance(result, InventorySnapshotResponse)
-    assert len(result.inventory_items) == 2
-    assert result.inventory_items[0].item_sku == "SKU1"
-    assert result.inventory_items[0].quantity == 50
-    assert result.inventory_items[1].inventory_type == "BAD_INVENTORY"
+    assert len(result.inventory_snapshots) == 2
+    assert result.inventory_snapshots[0].item_type_sku == "SKU1"
+    assert result.inventory_snapshots[0].inventory == 50
+    assert result.inventory_snapshots[0].open_sale == 5
+    assert result.inventory_snapshots[0].bad_inventory == 2
+    assert result.inventory_snapshots[1].item_type_sku == "SKU2"
+    assert result.inventory_snapshots[1].virtual_inventory == 9
+
+    # Verify the request body uses updatedSinceInMinutes
+    requests = httpx_mock.get_requests()
+    post_request = [r for r in requests if r.method == "POST"][0]
+    body = json.loads(post_request.content)
+    assert body["updatedSinceInMinutes"] == 30
 
     await client.close()

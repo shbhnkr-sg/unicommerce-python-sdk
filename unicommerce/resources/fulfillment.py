@@ -34,11 +34,12 @@ class AsyncFulfillment(AsyncBaseResource):
             safe_to_retry=False,
         )
 
-    async def get_shipping_package(self, code: str) -> ShippingPackageResponse:
+    async def get_shipping_package(self, shipping_package_code: str) -> ShippingPackageResponse:
         return await self._transport.request(
-            path="/oms/shippingPackage/get",
-            body={"code": code},
+            path="/oms/shippingPackage/getShippingPackageDetails",
+            body={"shippingPackageCode": shipping_package_code},
             response_model=ShippingPackageResponse,
+            dto_key="shippingPackageDetailDTO",
             safe_to_retry=True,
         )
 
@@ -102,11 +103,12 @@ class Fulfillment(BaseResource):
             safe_to_retry=False,
         )
 
-    def get_shipping_package(self, code: str) -> ShippingPackageResponse:
+    def get_shipping_package(self, shipping_package_code: str) -> ShippingPackageResponse:
         return self._transport.request(
-            path="/oms/shippingPackage/get",
-            body={"code": code},
+            path="/oms/shippingPackage/getShippingPackageDetails",
+            body={"shippingPackageCode": shipping_package_code},
             response_model=ShippingPackageResponse,
+            dto_key="shippingPackageDetailDTO",
             safe_to_retry=True,
         )
 

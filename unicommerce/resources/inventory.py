@@ -48,14 +48,11 @@ class AsyncInventory(AsyncBaseResource):
         )
 
     async def get_snapshot(
-        self, *, item_sku: str | None = None, facility: str | None = None
+        self, *, updated_since_in_minutes: int = 60, facility: str | None = None
     ) -> InventorySnapshotResponse:
-        body = {}
-        if item_sku:
-            body["itemSKU"] = item_sku
         return await self._transport.request(
             path="/inventory/inventorySnapshot/get",
-            body=body,
+            body={"updatedSinceInMinutes": updated_since_in_minutes},
             response_model=InventorySnapshotResponse,
             facility=facility,
             safe_to_retry=True,
@@ -115,14 +112,11 @@ class Inventory(BaseResource):
         )
 
     def get_snapshot(
-        self, *, item_sku: str | None = None, facility: str | None = None
+        self, *, updated_since_in_minutes: int = 60, facility: str | None = None
     ) -> InventorySnapshotResponse:
-        body = {}
-        if item_sku:
-            body["itemSKU"] = item_sku
         return self._transport.request(
             path="/inventory/inventorySnapshot/get",
-            body=body,
+            body={"updatedSinceInMinutes": updated_since_in_minutes},
             response_model=InventorySnapshotResponse,
             facility=facility,
             safe_to_retry=True,

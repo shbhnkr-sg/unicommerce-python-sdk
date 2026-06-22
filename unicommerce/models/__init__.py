@@ -33,9 +33,7 @@ from unicommerce.models.inventory import (
     InventorySnapshotResponse,
 )
 from unicommerce.models.products import (
-    CreateProductRequest,
     ProductResponse,
-    ProductSearchResponse,
 )
 from unicommerce.models.returns import (
     CreateReversePickupRequest,
@@ -67,9 +65,7 @@ __all__ = [
     "AdjustInventoryResponse",
     "InventorySnapshotItem",
     "InventorySnapshotResponse",
-    "CreateProductRequest",
     "ProductResponse",
-    "ProductSearchResponse",
     "CreateInvoiceRequest",
     "InvoiceResponse",
     "ShippingPackageResponse",

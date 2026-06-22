@@ -6,36 +6,50 @@ from unicommerce.resources.base import AsyncBaseResource, BaseResource
 
 
 class AsyncFacilities(AsyncBaseResource):
-    async def search(self, **filters) -> FacilitySearchResponse:
+    async def search(
+        self, *, from_date: str, to_date: str, facility_status: str = "ALL"
+    ) -> FacilitySearchResponse:
         return await self._transport.request(
             path="/facility/search",
-            body=filters,
+            body={
+                "fromDate": from_date,
+                "toDate": to_date,
+                "facilityStatus": facility_status,
+            },
             response_model=FacilitySearchResponse,
             safe_to_retry=True,
         )
 
-    async def get_details(self, code: str) -> FacilityResponse:
+    async def get_details(self, facility_code: str) -> FacilityResponse:
         return await self._transport.request(
             path="/facility/get",
-            body={"code": code},
+            body={"facilityCode": facility_code},
             response_model=FacilityResponse,
+            dto_key="facility",
             safe_to_retry=True,
         )
 
 
 class Facilities(BaseResource):
-    def search(self, **filters) -> FacilitySearchResponse:
+    def search(
+        self, *, from_date: str, to_date: str, facility_status: str = "ALL"
+    ) -> FacilitySearchResponse:
         return self._transport.request(
             path="/facility/search",
-            body=filters,
+            body={
+                "fromDate": from_date,
+                "toDate": to_date,
+                "facilityStatus": facility_status,
+            },
             response_model=FacilitySearchResponse,
             safe_to_retry=True,
         )
 
-    def get_details(self, code: str) -> FacilityResponse:
+    def get_details(self, facility_code: str) -> FacilityResponse:
         return self._transport.request(
             path="/facility/get",
-            body={"code": code},
+            body={"facilityCode": facility_code},
             response_model=FacilityResponse,
+            dto_key="facility",
             safe_to_retry=True,
         )
