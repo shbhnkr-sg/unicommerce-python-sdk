@@ -2,6 +2,8 @@ from unicommerce.models.inventory import (
     AdjustInventoryRequest,
     AdjustInventoryResponse,
     InventorySnapshotResponse,
+    MarkFoundResponse,
+    NearbyInventoryResponse,
 )
 from unicommerce.resources.base import AsyncBaseResource, BaseResource
 
@@ -58,6 +60,52 @@ class AsyncInventory(AsyncBaseResource):
             safe_to_retry=True,
         )
 
+    async def mark_found(
+        self,
+        *,
+        item_sku: str,
+        shelf_code: str,
+        quantity_found: int,
+        ageing_start_date: str | None = None,
+        facility: str | None = None,
+    ) -> MarkFoundResponse:
+        body: dict = {
+            "itemSku": item_sku,
+            "shelfCode": shelf_code,
+            "quantityFound": quantity_found,
+        }
+        if ageing_start_date is not None:
+            body["ageingStartDate"] = ageing_start_date
+        return await self._transport.request(
+            path="/inventory/markQuantityFound",
+            body=body,
+            response_model=MarkFoundResponse,
+            facility=facility,
+            safe_to_retry=False,
+        )
+
+    async def get_nearby_store_inventory(
+        self,
+        *,
+        customer_pincode: str,
+        facility_search_radius: str,
+        facility_operational_type: str,
+        facility_status: str,
+        sku_code: str,
+        quantity: int,
+    ) -> NearbyInventoryResponse:
+        return await self._transport.request(
+            path="/oms/nearbyInventory/get",
+            body={
+                "customerPincode": customer_pincode,
+                "facilitySearchRadius": facility_search_radius,
+                "facilityOperationalType": facility_operational_type,
+                "facilityStatus": facility_status,
+                "itemType": {"skuCode": sku_code, "quantity": quantity},
+            },
+            response_model=NearbyInventoryResponse,
+            safe_to_retry=True,
+        )
 
 
 class Inventory(BaseResource):
@@ -112,3 +160,49 @@ class Inventory(BaseResource):
             safe_to_retry=True,
         )
 
+    def mark_found(
+        self,
+        *,
+        item_sku: str,
+        shelf_code: str,
+        quantity_found: int,
+        ageing_start_date: str | None = None,
+        facility: str | None = None,
+    ) -> MarkFoundResponse:
+        body: dict = {
+            "itemSku": item_sku,
+            "shelfCode": shelf_code,
+            "quantityFound": quantity_found,
+        }
+        if ageing_start_date is not None:
+            body["ageingStartDate"] = ageing_start_date
+        return self._transport.request(
+            path="/inventory/markQuantityFound",
+            body=body,
+            response_model=MarkFoundResponse,
+            facility=facility,
+            safe_to_retry=False,
+        )
+
+    def get_nearby_store_inventory(
+        self,
+        *,
+        customer_pincode: str,
+        facility_search_radius: str,
+        facility_operational_type: str,
+        facility_status: str,
+        sku_code: str,
+        quantity: int,
+    ) -> NearbyInventoryResponse:
+        return self._transport.request(
+            path="/oms/nearbyInventory/get",
+            body={
+                "customerPincode": customer_pincode,
+                "facilitySearchRadius": facility_search_radius,
+                "facilityOperationalType": facility_operational_type,
+                "facilityStatus": facility_status,
+                "itemType": {"skuCode": sku_code, "quantity": quantity},
+            },
+            response_model=NearbyInventoryResponse,
+            safe_to_retry=True,
+        )

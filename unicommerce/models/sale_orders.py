@@ -68,3 +68,17 @@ class SaleOrderSearchResponse(UnicommerceResponse):
 class CancelResponse(UnicommerceResponse):
     code: str | None = Field(None, alias="code")
     status: str | None = Field(None, alias="status")
+
+
+class CustomerResponse(UnicommerceResponse):
+    customer: dict | None = Field(None, alias="customer")
+
+
+class ItemDetailResponse(UnicommerceResponse):
+    sale_order_item_code: str | None = Field(None, alias="saleOrderItemCode")
+
+
+class ItemDetailBulkResponse(UnicommerceResponse):
+    add_sale_order_item_detail_responses: list[dict] | None = Field(
+        None, alias="addSaleOrderItemDetailResponses"
+    )

@@ -14,7 +14,9 @@ class AdjustInventoryRequest(UnicommerceRequest):
 
 
 class AdjustInventoryResponse(UnicommerceResponse):
-    pass  # API returns only envelope (successful, message, errors, warnings)
+    inventory_adjustment_responses: list[dict] | None = Field(
+        None, alias="inventoryAdjustmentResponses"
+    )
 
 
 class InventorySnapshotItem(UnicommerceResponse):
@@ -34,4 +36,16 @@ class InventorySnapshotItem(UnicommerceResponse):
 class InventorySnapshotResponse(UnicommerceResponse):
     inventory_snapshots: list[InventorySnapshotItem] | None = Field(
         None, alias="inventorySnapshots"
+    )
+
+
+class MarkFoundResponse(UnicommerceResponse):
+    item_quantity_not_found_dto: list[dict] | None = Field(
+        None, alias="itemQuantityNotFoundDTO"
+    )
+
+
+class NearbyInventoryResponse(UnicommerceResponse):
+    facility_wise_nearby_inventory_snapshot_dto_list: list[dict] | None = Field(
+        None, alias="facilityWiseNearbyInventorySnapshotDTOList"
     )

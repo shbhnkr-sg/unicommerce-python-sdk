@@ -31,3 +31,28 @@ class ProductResponse(UnicommerceResponse):
     fragile: bool | None = Field(None, alias="fragile")
     dangerous_good: bool | None = Field(None, alias="dangerousGood")
     tags: list | None = Field(None, alias="tags")
+    custom_field_values: list | None = Field(None, alias="customFieldValues")
+    component_item_types: list | None = Field(None, alias="componentItemTypes")
+    expirable: bool | None = Field(None, alias="expirable")
+    image_url: str | None = Field(None, alias="imageUrl")
+    product_page_url: str | None = Field(None, alias="productPageUrl")
+    tax_type_code: str | None = Field(None, alias="taxTypeCode")
+    gst_tax_type_code: str | None = Field(None, alias="gstTaxTypeCode")
+
+
+class CategoryResponse(UnicommerceResponse):
+    pass
+
+
+class CreateOrEditItemResponse(UnicommerceResponse):
+    item_type: dict | None = Field(None, alias="itemType")
+
+
+class ChannelItemTypeResponse(UnicommerceResponse):
+    channel_product_id: str | None = Field(None, alias="channelProductId")
+    item_type: dict | None = Field(None, alias="itemType")
+
+
+class ProductSearchResponse(UnicommerceResponse):
+    total_records: int | None = Field(None, alias="totalRecords")
+    elements: list[dict] | None = Field(None, alias="elements")

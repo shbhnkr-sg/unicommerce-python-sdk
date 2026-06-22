@@ -5,6 +5,7 @@ from unicommerce.resources.facilities import AsyncFacilities
 from unicommerce.resources.fulfillment import AsyncFulfillment
 from unicommerce.resources.inbound import AsyncInbound
 from unicommerce.resources.inventory import AsyncInventory
+from unicommerce.resources.outbound import AsyncOutbound
 from unicommerce.resources.products import AsyncProducts
 from unicommerce.resources.returns import AsyncReturns
 from unicommerce.resources.sale_orders import AsyncSaleOrders
@@ -27,6 +28,7 @@ class AsyncUnicommerce:
         self.returns = AsyncReturns(self._transport)
         self.facilities = AsyncFacilities(self._transport)
         self.export_jobs = AsyncExportJobs(self._transport)
+        self.outbound = AsyncOutbound(self._transport)
 
     async def __aenter__(self):
         return self

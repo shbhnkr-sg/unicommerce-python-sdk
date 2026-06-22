@@ -93,3 +93,8 @@ class UpdateTrackingStatusResponse(UnicommerceResponse):
     total_polled: int | None = Field(None, alias="totalPolled")
     failures: int | None = Field(None, alias="failures")
     total_changed: int | None = Field(None, alias="totalChanged")
+
+
+class ShippingPackageSearchResponse(UnicommerceResponse):
+    total_records: int | None = Field(None, alias="totalRecords")
+    elements: list[dict] | None = Field(None, alias="elements")

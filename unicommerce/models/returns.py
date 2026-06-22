@@ -23,3 +23,10 @@ class ReturnGetResponse(UnicommerceResponse):
 class ReversePickupResponse(UnicommerceResponse):
     reverse_pickup_code: str | None = Field(None, alias="reversePickupCode")
     sale_order_item_codes: list[str] | None = Field(None, alias="saleOrderItemCodes")
+
+
+class AllocateCourierResponse(UnicommerceResponse):
+    assigned_rvp: list[dict] | None = Field(None, alias="assignedRVP")
+    already_assigned_rvp: list[dict] | None = Field(None, alias="alreadyAssignedRVP")
+    manual_rvps: list[dict] | None = Field(None, alias="manualRVPS")
+    erroneous_rvp: list[dict] | None = Field(None, alias="errorneousRVP")

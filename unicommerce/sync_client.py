@@ -5,6 +5,7 @@ from unicommerce.resources.facilities import Facilities
 from unicommerce.resources.fulfillment import Fulfillment
 from unicommerce.resources.inbound import Inbound
 from unicommerce.resources.inventory import Inventory
+from unicommerce.resources.outbound import Outbound
 from unicommerce.resources.products import Products
 from unicommerce.resources.returns import Returns
 from unicommerce.resources.sale_orders import SaleOrders
@@ -27,6 +28,7 @@ class Unicommerce:
         self.returns = Returns(self._transport)
         self.facilities = Facilities(self._transport)
         self.export_jobs = ExportJobs(self._transport)
+        self.outbound = Outbound(self._transport)
 
     def __enter__(self):
         return self
