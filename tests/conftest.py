@@ -1,5 +1,6 @@
 import ctypes
 import ctypes.wintypes
+import os
 
 import pytest
 
@@ -34,13 +35,15 @@ def _read_credential(target: str) -> str | None:
     return None
 
 
-TENANT = "YOUR_TENANT"
-USERNAME = _read_credential("unicommerce-login-id")
-PASSWORD = _read_credential("unicommerce-password")
-FACILITY = "YOUR_TENANT"
+TENANT = os.environ.get("UNICOMMERCE_TENANT", "")
+USERNAME = os.environ.get("UNICOMMERCE_USERNAME") or _read_credential("unicommerce-login-id")
+PASSWORD = os.environ.get("UNICOMMERCE_PASSWORD") or _read_credential("unicommerce-password")
+FACILITY = os.environ.get("UNICOMMERCE_FACILITY", TENANT)
 
+if not TENANT:
+    pytest.exit("Set UNICOMMERCE_TENANT env var or pass --tenant", returncode=1)
 if not USERNAME or not PASSWORD:
-    pytest.exit("Unicommerce credentials not found in Windows Credential Manager", returncode=1)
+    pytest.exit("Credentials not found (env vars or Windows Credential Manager)", returncode=1)
 
 
 @pytest.fixture(scope="session")
