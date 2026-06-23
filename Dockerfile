@@ -8,4 +8,6 @@ COPY mcp_server.py .
 
 RUN pip install --no-cache-dir ".[mcp]"
 
+EXPOSE 8000
+
 ENTRYPOINT ["python", "mcp_server.py"]

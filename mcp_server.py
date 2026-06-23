@@ -385,6 +385,9 @@ mcp = FastMCP(
         "tools://catalog for a full tool listing grouped by domain."
     ),
     lifespan=app_lifespan,
+    host=os.environ.get("MCP_HOST", "0.0.0.0"),
+    port=int(os.environ.get("MCP_PORT", "8000")),
+    json_response=True,
 )
 
 
@@ -1864,4 +1867,4 @@ def clear_cache(ctx) -> str:
 # ===========================================================================
 
 if __name__ == "__main__":
-    mcp.run(transport="stdio")
+    mcp.run(transport="streamable-http")

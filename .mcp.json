@@ -1,15 +1,7 @@
 {
   "mcpServers": {
     "unicommerce": {
-      "command": "docker",
-      "args": [
-        "run", "--rm", "-i",
-        "-e", "UC_TENANT",
-        "-e", "UC_USERNAME",
-        "-e", "UC_PASSWORD",
-        "-e", "UC_FACILITY",
-        "unicommerce-mcp"
-      ]
+      "url": "http://192.168.0.150:8000/mcp"
     }
   }
 }
