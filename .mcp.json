@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "unicommerce": {
-      "url": "http://192.168.0.150:8000/mcp"
+      "url": "http://192.168.0.150:8001/mcp"
     }
   }
 }
