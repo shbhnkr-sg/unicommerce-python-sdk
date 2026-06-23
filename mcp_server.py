@@ -361,7 +361,7 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
         tenant=tenant,
         username=username,
         password=password,
-        facility=_resolve_facility(ctx, facility),
+        facility=facility,
     )
     refresher = TokenRefresher(client._auth)
     cache = ResponseCache()
