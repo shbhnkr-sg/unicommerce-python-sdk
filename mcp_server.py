@@ -391,19 +391,19 @@ mcp = FastMCP(
 )
 
 
-def _client(ctx) -> Unicommerce:
+def _client(ctx: Context) -> Unicommerce:
     return ctx.request_context.lifespan_context.client
 
 
-def _cache(ctx) -> ResponseCache:
+def _cache(ctx: Context) -> ResponseCache:
     return ctx.request_context.lifespan_context.cache
 
 
-def _app_ctx(ctx) -> AppContext:
+def _app_ctx(ctx: Context) -> AppContext:
     return ctx.request_context.lifespan_context
 
 
-def _resolve_facility(ctx, explicit: str | None) -> str | None:
+def _resolve_facility(ctx: Context, explicit: str | None) -> str | None:
     if explicit:
         return explicit
     return _app_ctx(ctx).facility_override
@@ -1843,7 +1843,7 @@ def set_facility(
 
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True))
-def get_facility(ctx) -> str:
+def get_facility(ctx: Context) -> str:
     """Get the current effective facility. Shows both the session override and the config default."""
     override = _app_ctx(ctx).facility_override
     config_default = _client(ctx)._config.facility
@@ -1856,7 +1856,7 @@ def get_facility(ctx) -> str:
 # ===========================================================================
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=False))
-def clear_cache(ctx) -> str:
+def clear_cache(ctx: Context) -> str:
     """Clear all cached responses. Use when you suspect stale data."""
     count = _cache(ctx).clear()
     return json.dumps({"cleared_entries": count, "success": True})
