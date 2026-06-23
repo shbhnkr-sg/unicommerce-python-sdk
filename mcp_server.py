@@ -288,7 +288,10 @@ def _call(fn, *args, **kwargs) -> str:
         return json.dumps(_serialize(result), default=str, ensure_ascii=False)
     except UnicommerceError as exc:
         from mcp.server.fastmcp.exceptions import ToolError
-        raise ToolError(str(exc)) from exc
+        msg = str(exc)
+        if hasattr(exc, "errors") and exc.errors:
+            msg += " | " + json.dumps(exc.errors, default=str)
+        raise ToolError(msg) from exc
 
 
 def _pdf_call(fn, **kwargs) -> str:
