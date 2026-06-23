@@ -32,6 +32,9 @@ Repository = "https://github.com/shbhnkr-sg/unicommerce-python-sdk"
 Issues = "https://github.com/shbhnkr-sg/unicommerce-python-sdk/issues"
 
 [project.optional-dependencies]
+mcp = [
+    "mcp[cli]>=1.0",
+]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
