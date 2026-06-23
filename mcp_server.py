@@ -346,8 +346,12 @@ class AppContext:
     facility_override: str | None = None
 
 
+_app: AppContext | None = None
+
+
 @asynccontextmanager
 async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
+    global _app
     tenant = os.environ.get("UC_TENANT", "")
     username = os.environ.get("UC_USERNAME", "")
     password = os.environ.get("UC_PASSWORD", "")
@@ -366,9 +370,12 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
     refresher = TokenRefresher(client._auth)
     cache = ResponseCache()
     refresher.start()
+    ctx = AppContext(client=client, refresher=refresher, cache=cache)
+    _app = ctx
     try:
-        yield AppContext(client=client, refresher=refresher, cache=cache)
+        yield ctx
     finally:
+        _app = None
         refresher.stop()
         client.close()
 
@@ -414,19 +421,19 @@ def _resolve_facility(ctx: Context, explicit: str | None) -> str | None:
 # ---------------------------------------------------------------------------
 
 @mcp.resource("token://status")
-def token_status(ctx: Context) -> str:
+def token_status() -> str:
     """Current OAuth token health and refresh statistics."""
-    return json.dumps(ctx.request_context.lifespan_context.refresher.status())
+    return json.dumps(_app.refresher.status())
 
 
 @mcp.resource("cache://stats")
-def cache_stats(ctx: Context) -> str:
+def cache_stats() -> str:
     """Response cache hit/miss statistics."""
-    return json.dumps(_cache(ctx).stats())
+    return json.dumps(_app.cache.stats())
 
 
 @mcp.resource("tools://catalog")
-def tool_catalog(ctx: Context) -> str:
+def tool_catalog() -> str:
     """Complete catalog of all available tools grouped by domain."""
     tools = mcp._tool_manager.list_tools()
     catalog = []
