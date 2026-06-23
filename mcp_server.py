@@ -181,34 +181,34 @@ _CACHE_IF: dict[str, object] = {
 
 _EXPORT_JOB_TYPES = {
     # No filters required — status: works
-    "Inventory Snapshot": {"required_filters": [], "status": "works", "description": "Current inventory state across facilities"},
-    "Facility": {"required_filters": [], "status": "works", "description": "Facility/warehouse data and configuration"},
-    "Shelfwise Inventory": {"required_filters": [], "status": "works", "description": "Inventory by storage shelf location"},
-    "Vendor Item Master": {"required_filters": [], "status": "works", "description": "Vendor-item mapping master data"},
+    "Inventory Snapshot": {"required_filters": [], "status": "works", "description": "Current inventory state across facilities", "columns": ["facility", "itemTypeName", "itemSkuCode", "ean", "upc", "isbn", "color", "size", "brand", "categoryName", "MRP", "openSale", "inventory", "quantityNotFound", "excessQuantity", "quarantinedInventory", "inventoryNotSynced", "inventoryBlocked", "badInventory", "putawayPending", "pendingInventoryAssessment", "pendingStockTransfer", "openPurchase", "enabled", "updated", "costPrice"]},
+    "Facility": {"required_filters": [], "status": "works", "description": "Facility/warehouse data and configuration", "columns": ["facilityCode", "facilityName", "facilityDisplayName", "facilityType", "facilityOperationalType", "facilityCreatedOn", "tinNo", "billingAddress", "billingCity", "billingPincode", "billingLatitude", "billingLongitude", "billingState", "billingCountry", "billingPhone", "shippingAddress", "shippingCity", "shippingPincode", "shippingLatitude", "shippingLongitude", "shippingState", "shippingCountry", "shippingPhone", "dailyMaxOrderProcessingCapacityEnabled", "dailyOrderItemsProcessingCapacity", "priority", "billFromAddressType", "openingTime", "closingTime", "taxableCustomerAddressType"]},
+    "Shelfwise Inventory": {"required_filters": [], "status": "works", "description": "Inventory by storage shelf location", "columns": ["facility", "itemTypeSKUCode", "itemTypeName", "inventoryType", "shelf", "inventoryAllocation", "inventorySync", "skuMixing", "shelfOnHold", "quantity", "quantityBlocked", "quantityNotFound", "excessQuantity", "netVariance", "quantityDamaged", "priority", "section", "batchCode", "expiry"]},
+    "Vendor Item Master": {"required_filters": [], "status": "works", "description": "Vendor-item mapping master data", "columns": ["facility", "productCode", "productName", "unitPrice", "inventory", "vendorCode", "vendorSkuCode", "leadTime", "priority", "enabled", "updated"]},
 
     # Require specific named date filter — status: needs_ui_filter_ids
     # (filter ID is tenant-specific and not discoverable via API; must be obtained from the Unicommerce web UI)
-    "Putaway": {"required_filters": ["Created in Date Range"], "status": "needs_ui_filter_ids", "description": "Putaway operations"},
-    "Shipping Package": {"required_filters": ["Added in Date Range"], "status": "needs_ui_filter_ids", "description": "Shipping package data"},
-    "Picklist": {"required_filters": ["In Date Range"], "status": "needs_ui_filter_ids", "description": "Picklist data"},
-    "Reverse Pickup": {"required_filters": ["Reverse Pickup Created Date Range"], "status": "needs_ui_filter_ids", "description": "Reverse pickup records"},
-    "Gatepass": {"required_filters": ["Created Date Range"], "status": "needs_ui_filter_ids", "description": "Gatepass records"},
-    "Invoice": {"required_filters": ["Created in Date Range"], "status": "needs_ui_filter_ids", "description": "Invoice data"},
-    "Deleted Entity": {"required_filters": ["Deleted Entity Date Range"], "status": "needs_ui_filter_ids", "description": "Deleted entity records"},
-    "Tally Return GST Report": {"required_filters": ["Returned in Date Range"], "status": "needs_ui_filter_ids", "description": "GST return report for Tally"},
-    "Tally Cancel GST Report": {"required_filters": ["Created in Date Range"], "status": "needs_ui_filter_ids", "description": "GST cancellation report for Tally"},
-    "Fastlane Courier Allocation Error Logs": {"required_filters": ["Time Stamp of Error"], "status": "needs_ui_filter_ids", "description": "Courier allocation error logs"},
-    "Courier Return Itemwise": {"required_filters": ["Sale Order Created In Date Range"], "status": "needs_ui_filter_ids", "description": "Item-wise courier return data"},
-    "Inventory Ledger": {"required_filters": ["Created Date Range"], "status": "needs_ui_filter_ids", "description": "Monthly stock ledger"},
+    "Putaway": {"required_filters": ["Created in Date Range"], "status": "needs_ui_filter_ids", "description": "Putaway operations", "columns": []},
+    "Shipping Package": {"required_filters": ["Added in Date Range"], "status": "needs_ui_filter_ids", "description": "Shipping package data", "columns": []},
+    "Picklist": {"required_filters": ["In Date Range"], "status": "needs_ui_filter_ids", "description": "Picklist data", "columns": []},
+    "Reverse Pickup": {"required_filters": ["Reverse Pickup Created Date Range"], "status": "needs_ui_filter_ids", "description": "Reverse pickup records", "columns": ["reversePickupCode", "saleOrderCode", "channel"]},
+    "Gatepass": {"required_filters": ["Created Date Range"], "status": "needs_ui_filter_ids", "description": "Gatepass records", "columns": []},
+    "Invoice": {"required_filters": ["Created in Date Range"], "status": "needs_ui_filter_ids", "description": "Invoice data", "columns": []},
+    "Deleted Entity": {"required_filters": ["Deleted Entity Date Range"], "status": "needs_ui_filter_ids", "description": "Deleted entity records", "columns": ["displayCode", "channelCode", "channelSourceCode", "createdAt", "deletedAt"]},
+    "Tally Return GST Report": {"required_filters": ["Returned in Date Range"], "status": "needs_ui_filter_ids", "description": "GST return report for Tally", "columns": []},
+    "Tally Cancel GST Report": {"required_filters": ["Created in Date Range"], "status": "needs_ui_filter_ids", "description": "GST cancellation report for Tally", "columns": []},
+    "Fastlane Courier Allocation Error Logs": {"required_filters": ["Time Stamp of Error"], "status": "needs_ui_filter_ids", "description": "Courier allocation error logs", "columns": []},
+    "Courier Return Itemwise": {"required_filters": ["Sale Order Created In Date Range"], "status": "needs_ui_filter_ids", "description": "Item-wise courier return data", "columns": []},
+    "Inventory Ledger": {"required_filters": ["Created Date Range"], "status": "needs_ui_filter_ids", "description": "Monthly stock ledger", "columns": []},
 
     # Require filter tag [1] — status: server_bug
     # (any filter payload causes a Jackson deserialization error due to tag[1] servlet InputStream double-read bug)
-    "Sale Orders": {"required_filters": ["Added In Date Range (tag:1)", "Updated In Date Range (tag:1)"], "status": "server_bug", "description": "Sale order data export"},
-    "GRN": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "Goods received note data"},
-    "Purchase Orders": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "Purchase order data"},
-    "Sequence Detail": {"required_filters": ["Party Type (tag:1)"], "status": "server_bug", "description": "Sequence/numbering details"},
-    "Shipping Package Timeline": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "Shipping package timeline events"},
-    "Tally GST Report": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "GST dispatch report for Tally"},
+    "Sale Orders": {"required_filters": ["Added In Date Range (tag:1)", "Updated In Date Range (tag:1)"], "status": "server_bug", "description": "Sale order data export", "columns": ["saleOrderCode", "channel", "status", "created", "updated", "facility", "totalPrice", "sellingPrice", "costPrice", "discount", "subtotal", "prepaidAmount", "cod", "priority", "itemTypeName", "skuCode", "hsnCode", "category", "channelProductId", "itemTypeColor", "itemTypeSize", "itemTypeBrand", "shippingProvider", "shippingMethod", "invoiceCode", "invoiceCreated", "reversePickupCode", "reversePickupCreatedDate", "reversePickupReason", "gstTaxTypeCode", "igst", "cgst", "sgst", "shippingAddressName", "shippingAddressLine1", "shippingAddressLine2", "shippingAddressCity", "shippingAddressState", "shippingAddressCountry", "shippingAddressPincode", "shippingAddressPhone", "shippingAddressId", "billingAddressName", "billingAddressLine1", "billingAddressLine2", "billingAddressCity", "billingAddressState", "billingAddressCountry", "billingAddressPincode", "billingAddressPhone", "billingAddressId", "notificationEmail", "notificationMobile", "requireCustomization", "giftWrap", "giftMessage"]},
+    "GRN": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "Goods received note data", "columns": []},
+    "Purchase Orders": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "Purchase order data", "columns": []},
+    "Sequence Detail": {"required_filters": ["Party Type (tag:1)"], "status": "server_bug", "description": "Sequence/numbering details", "columns": []},
+    "Shipping Package Timeline": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "Shipping package timeline events", "columns": []},
+    "Tally GST Report": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "GST dispatch report for Tally", "columns": ["invoiceCode", "invoiceDate", "saleOrderCode", "igst", "cgst", "sgst", "hsnCode"]},
 }
 
 _DATE_RANGE_PRESETS = [
