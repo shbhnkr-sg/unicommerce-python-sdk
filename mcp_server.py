@@ -457,7 +457,7 @@ def tool_catalog(ctx: Context) -> str:
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False, idempotentHint=False),
 )
 def create_sale_order(
-    ctx,
+    ctx: Context,
     order: Annotated[dict, Field(description="Full sale order payload (see Unicommerce API docs)")],
     facility: Annotated[str | None, Field(description="Facility code override")] = None,
 ) -> str:
@@ -470,7 +470,7 @@ def create_sale_order(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_sale_order(
-    ctx,
+    ctx: Context,
     code: Annotated[str, Field(description="Sale order code, e.g. SO-12345")],
     facility_codes: Annotated[list[str] | None, Field(description="Filter by facility codes")] = None,
 ) -> str:
@@ -481,7 +481,7 @@ def get_sale_order(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def search_sale_orders(
-    ctx,
+    ctx: Context,
     filters: Annotated[dict, Field(description="Search filters — e.g. {\"statusCode\": \"CREATED\", \"channel\": \"SHOPIFY\"}")],
 ) -> str:
     """Search sale orders with flexible filters."""
@@ -491,7 +491,7 @@ def search_sale_orders(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True),
 )
 def cancel_sale_order(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code to cancel")],
     sale_order_item_codes: Annotated[list[str] | None, Field(description="Specific items to cancel (omit for full order)")] = None,
     cancellation_reason: Annotated[str | None, Field(description="Reason for cancellation")] = None,
@@ -510,7 +510,7 @@ def cancel_sale_order(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False),
 )
 def edit_sale_order(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     addresses: Annotated[list[dict], Field(description="Updated address list")],
 ) -> str:
@@ -521,7 +521,7 @@ def edit_sale_order(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False),
 )
 def verify_sale_order(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code to verify")],
 ) -> str:
     """Verify a sale order."""
@@ -531,7 +531,7 @@ def verify_sale_order(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False),
 )
 def set_sale_order_priority(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     priority: Annotated[int, Field(description="Priority value (higher = more urgent)")],
 ) -> str:
@@ -541,7 +541,7 @@ def set_sale_order_priority(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def hold_sale_order(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
 ) -> str:
     """Put a sale order on hold."""
@@ -550,7 +550,7 @@ def hold_sale_order(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def unhold_sale_order(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
 ) -> str:
     """Release a sale order from hold."""
@@ -559,7 +559,7 @@ def unhold_sale_order(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def hold_sale_order_items(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_codes: Annotated[list[str], Field(description="Item codes to hold")],
 ) -> str:
@@ -573,7 +573,7 @@ def hold_sale_order_items(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def unhold_sale_order_items(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_codes: Annotated[list[str], Field(description="Item codes to unhold")],
 ) -> str:
@@ -587,7 +587,7 @@ def unhold_sale_order_items(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def edit_sale_order_metadata(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     priority: Annotated[int | None, Field(description="New priority")] = None,
     custom_field_values: Annotated[list[dict] | None, Field(description="Custom fields [{\"name\": ..., \"value\": ...}]")] = None,
@@ -603,7 +603,7 @@ def edit_sale_order_metadata(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def edit_sale_order_item_metadata(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_code: Annotated[str, Field(description="Item code")],
     custom_field_values: Annotated[list[dict], Field(description="Custom fields to set")],
@@ -619,7 +619,7 @@ def edit_sale_order_item_metadata(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_customer(
-    ctx,
+    ctx: Context,
     customer: Annotated[dict, Field(description="Customer data payload")],
 ) -> str:
     """Create a new customer."""
@@ -628,7 +628,7 @@ def create_customer(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def edit_customer(
-    ctx,
+    ctx: Context,
     customer: Annotated[dict, Field(description="Customer data with updates")],
 ) -> str:
     """Edit an existing customer."""
@@ -637,7 +637,7 @@ def edit_customer(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def switch_sale_order_facility(
-    ctx,
+    ctx: Context,
     facility_code: Annotated[str, Field(description="Target facility code")],
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_codes: Annotated[list[str], Field(description="Item codes to switch")],
@@ -653,7 +653,7 @@ def switch_sale_order_facility(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def add_sale_order_item_detail(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_code: Annotated[str, Field(description="Item code")],
     item_details: Annotated[list[dict], Field(description="Item detail records to add")],
@@ -669,7 +669,7 @@ def add_sale_order_item_detail(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def add_sale_order_item_detail_bulk(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_detail_dtos: Annotated[list[dict], Field(description="Bulk item detail DTOs")],
 ) -> str:
@@ -687,7 +687,7 @@ def add_sale_order_item_detail_bulk(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def adjust_inventory(
-    ctx,
+    ctx: Context,
     item_sku: Annotated[str, Field(description="SKU code of the item")],
     quantity: Annotated[int, Field(description="Quantity to adjust")],
     shelf_code: Annotated[str, Field(description="Shelf code in the warehouse")],
@@ -713,7 +713,7 @@ def adjust_inventory(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def adjust_inventory_bulk(
-    ctx,
+    ctx: Context,
     adjustments: Annotated[list[dict], Field(description="List of inventory adjustment objects")],
     facility: Annotated[str | None, Field(description="Facility code override")] = None,
 ) -> str:
@@ -724,7 +724,7 @@ def adjust_inventory_bulk(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_inventory_snapshot(
-    ctx,
+    ctx: Context,
     updated_since_in_minutes: Annotated[int, Field(description="Get items updated in last N minutes")] = 60,
     facility: Annotated[str | None, Field(description="Facility code override")] = None,
 ) -> str:
@@ -738,7 +738,7 @@ def get_inventory_snapshot(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def mark_inventory_found(
-    ctx,
+    ctx: Context,
     item_sku: Annotated[str, Field(description="SKU code")],
     shelf_code: Annotated[str, Field(description="Shelf where item was found")],
     quantity_found: Annotated[int, Field(description="Quantity found")],
@@ -759,7 +759,7 @@ def mark_inventory_found(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True, openWorldHint=False),
 )
 def get_nearby_store_inventory(
-    ctx,
+    ctx: Context,
     customer_pincode: Annotated[str, Field(description="Customer's pincode")],
     facility_search_radius: Annotated[str, Field(description="Search radius")],
     facility_operational_type: Annotated[str, Field(description="Facility operational type")],
@@ -786,7 +786,7 @@ def get_nearby_store_inventory(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_product(
-    ctx,
+    ctx: Context,
     sku_code: Annotated[str, Field(description="Product SKU code")],
 ) -> str:
     """Get product details by SKU code."""
@@ -796,7 +796,7 @@ def get_product(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_product_by_item_code(
-    ctx,
+    ctx: Context,
     item_code: Annotated[str, Field(description="Unique item code")],
 ) -> str:
     """Get product details by item code (barcode/serial)."""
@@ -806,7 +806,7 @@ def get_product_by_item_code(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def search_products(
-    ctx,
+    ctx: Context,
     filters: Annotated[dict, Field(description="Search filters — e.g. {\"skuCode\": \"SKU-*\", \"categoryCode\": \"ELECTRONICS\"}")],
 ) -> str:
     """Search products with flexible filters."""
@@ -815,7 +815,7 @@ def search_products(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_or_edit_product(
-    ctx,
+    ctx: Context,
     item_type: Annotated[dict, Field(description="Product item type payload")],
 ) -> str:
     """Create a new product or edit an existing one."""
@@ -824,7 +824,7 @@ def create_or_edit_product(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_or_edit_products_bulk(
-    ctx,
+    ctx: Context,
     item_types: Annotated[list[dict], Field(description="List of product item type payloads")],
 ) -> str:
     """Bulk create or edit multiple products."""
@@ -833,7 +833,7 @@ def create_or_edit_products_bulk(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_or_edit_category(
-    ctx,
+    ctx: Context,
     category: Annotated[dict, Field(description="Category payload with name, code, etc.")],
 ) -> str:
     """Create or edit a product category."""
@@ -842,7 +842,7 @@ def create_or_edit_category(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_channel_item_type(
-    ctx,
+    ctx: Context,
     params: Annotated[dict, Field(description="Channel item type parameters")],
 ) -> str:
     """Create a channel-specific item type mapping."""
@@ -855,7 +855,7 @@ def create_channel_item_type(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_shipping_package(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_codes: Annotated[list[str], Field(description="Item codes to pack")],
 ) -> str:
@@ -870,7 +870,7 @@ def create_shipping_package(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_shipping_package(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
 ) -> str:
     """Get details of a shipping package."""
@@ -880,7 +880,7 @@ def get_shipping_package(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def search_shipping_packages(
-    ctx,
+    ctx: Context,
     filters: Annotated[dict, Field(description="Search filters for shipping packages")],
 ) -> str:
     """Search shipping packages with filters."""
@@ -889,7 +889,7 @@ def search_shipping_packages(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def edit_shipping_package(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
     updates: Annotated[dict, Field(description="Fields to update")] = {},
 ) -> str:
@@ -903,7 +903,7 @@ def edit_shipping_package(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def split_shipping_package(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package to split")],
     split_packages: Annotated[list[dict], Field(description="Split configuration")],
 ) -> str:
@@ -917,7 +917,7 @@ def split_shipping_package(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def modify_shipping_package(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_codes: Annotated[list[str], Field(description="Item codes to modify")],
 ) -> str:
@@ -932,7 +932,7 @@ def modify_shipping_package(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_shipping_packages_by_status(
-    ctx,
+    ctx: Context,
     status_code: Annotated[str | None, Field(description="Filter by status code")] = None,
 ) -> str:
     """Get shipping packages, optionally filtered by status."""
@@ -941,7 +941,7 @@ def get_shipping_packages_by_status(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_invoice(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
 ) -> str:
     """Create an invoice for a shipping package."""
@@ -951,7 +951,7 @@ def create_invoice(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_invoice_details(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
     is_return: Annotated[bool, Field(description="Whether this is a return invoice")] = False,
     payment_detail_required: Annotated[bool, Field(description="Include payment details")] = False,
@@ -968,7 +968,7 @@ def get_invoice_details(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_invoice_label(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
 ) -> str:
     """Get the invoice label for a shipping package."""
@@ -977,7 +977,7 @@ def get_invoice_label(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_invoice_and_label(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
     generate_uniware_shipping_label: Annotated[bool, Field(description="Generate Uniware shipping label")] = True,
 ) -> str:
@@ -991,7 +991,7 @@ def create_invoice_and_label(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_invoice_by_sale_order(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_codes: Annotated[list[str], Field(description="Item codes to invoice")],
 ) -> str:
@@ -1005,7 +1005,7 @@ def create_invoice_by_sale_order(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_invoice_with_details(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     invoice: Annotated[dict, Field(description="Invoice detail payload")],
 ) -> str:
@@ -1019,7 +1019,7 @@ def create_invoice_with_details(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_invoice_and_allocate_provider(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
 ) -> str:
     """Create invoice and allocate a shipping provider in one call."""
@@ -1032,7 +1032,7 @@ def create_invoice_and_allocate_provider(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_invoice_pdf(
-    ctx,
+    ctx: Context,
     invoice_codes: Annotated[list[str], Field(description="Invoice codes to download")],
 ) -> str:
     """Download invoice PDF(s). Returns base64-encoded PDF content."""
@@ -1045,7 +1045,7 @@ def get_invoice_pdf(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_shipping_label_pdf(
-    ctx,
+    ctx: Context,
     shipping_package_codes: Annotated[list[str], Field(description="Shipping package codes")],
 ) -> str:
     """Download shipping label PDF(s). Returns base64-encoded PDF content."""
@@ -1058,7 +1058,7 @@ def get_shipping_label_pdf(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def check_serviceability(
-    ctx,
+    ctx: Context,
     pincode: Annotated[str, Field(description="Delivery pincode to check")],
     cash_on_delivery: Annotated[bool, Field(description="Check COD availability")],
 ) -> str:
@@ -1073,7 +1073,7 @@ def check_serviceability(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def allocate_shipping_provider(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
 ) -> str:
     """Allocate a shipping provider to a package."""
@@ -1085,7 +1085,7 @@ def allocate_shipping_provider(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def update_tracking_status(
-    ctx,
+    ctx: Context,
     provider_code: Annotated[str, Field(description="Shipping provider code")],
     tracking_number: Annotated[str, Field(description="Tracking/AWB number")],
     tracking_status: Annotated[str, Field(description="New tracking status")],
@@ -1109,7 +1109,7 @@ def update_tracking_status(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_manifest(
-    ctx,
+    ctx: Context,
     channel: Annotated[str, Field(description="Sales channel")],
     third_party_shipping: Annotated[bool, Field(description="Uses third-party shipping provider")],
     shipping_provider_code: Annotated[str | None, Field(description="Shipping provider code")] = None,
@@ -1126,7 +1126,7 @@ def create_manifest(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_manifest(
-    ctx,
+    ctx: Context,
     shipping_manifest_code: Annotated[str, Field(description="Manifest code")],
 ) -> str:
     """Get details of a shipping manifest."""
@@ -1135,7 +1135,7 @@ def get_manifest(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def add_package_to_manifest(
-    ctx,
+    ctx: Context,
     shipping_manifest_code: Annotated[str, Field(description="Manifest code")],
     shipping_package_codes: Annotated[list[str], Field(description="Package codes to add")],
 ) -> str:
@@ -1149,7 +1149,7 @@ def add_package_to_manifest(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_and_close_manifest(
-    ctx,
+    ctx: Context,
     params: Annotated[dict, Field(description="Manifest creation parameters")],
 ) -> str:
     """Create a manifest and close it immediately."""
@@ -1158,7 +1158,7 @@ def create_and_close_manifest(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def close_manifest(
-    ctx,
+    ctx: Context,
     shipping_manifest_code: Annotated[str, Field(description="Manifest code to close")],
 ) -> str:
     """Close a shipping manifest (no more packages can be added)."""
@@ -1167,7 +1167,7 @@ def close_manifest(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def dispatch_shipping_package(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
 ) -> str:
     """Dispatch a shipping package (mark as shipped)."""
@@ -1176,7 +1176,7 @@ def dispatch_shipping_package(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def force_dispatch_shipping_package(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
 ) -> str:
     """Force dispatch a shipping package, bypassing normal validations."""
@@ -1185,7 +1185,7 @@ def force_dispatch_shipping_package(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_and_dispatch(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_info: Annotated[list[dict], Field(description="Item info list")],
     shipping_package_info: Annotated[dict, Field(description="Shipping package configuration")],
@@ -1203,7 +1203,7 @@ def create_and_dispatch(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def mark_delivered(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_codes: Annotated[list[str], Field(description="Item codes to mark delivered")],
     pod_code: Annotated[str | None, Field(description="Proof of delivery code")] = None,
@@ -1219,7 +1219,7 @@ def mark_delivered(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_picklist(
-    ctx,
+    ctx: Context,
     shipping_package_codes: Annotated[list[str], Field(description="Package codes for the picklist")],
     destination: Annotated[str | None, Field(description="Picklist destination (omit for staging)")] = None,
 ) -> str:
@@ -1233,7 +1233,7 @@ def create_picklist(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_or_update_reason(
-    ctx,
+    ctx: Context,
     name: Annotated[str, Field(description="Reason list name")],
     value: Annotated[str, Field(description="Reason value")],
 ) -> str:
@@ -1243,7 +1243,7 @@ def create_or_update_reason(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def update_seal_id(
-    ctx,
+    ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
     shipping_package_type_code: Annotated[str, Field(description="Package type code")],
     spt_item_seal_id: Annotated[str, Field(description="Seal ID")],
@@ -1261,7 +1261,7 @@ def update_seal_id(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def update_seal_id_bulk(
-    ctx,
+    ctx: Context,
     packages: Annotated[list[dict], Field(description="List of package seal update objects")],
 ) -> str:
     """Bulk update seal IDs on multiple shipping packages."""
@@ -1274,7 +1274,7 @@ def update_seal_id_bulk(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_vendor(
-    ctx,
+    ctx: Context,
     vendor: Annotated[dict, Field(description="Vendor data payload")],
 ) -> str:
     """Create a new vendor."""
@@ -1283,7 +1283,7 @@ def create_vendor(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_or_edit_vendor_catalog(
-    ctx,
+    ctx: Context,
     vendor_item_type: Annotated[dict, Field(description="Vendor item type mapping")],
 ) -> str:
     """Create or edit a vendor's product catalog mapping."""
@@ -1293,7 +1293,7 @@ def create_or_edit_vendor_catalog(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_vendor_backorder_items(
-    ctx,
+    ctx: Context,
     filters: Annotated[dict, Field(description="Backorder search filters")],
 ) -> str:
     """Get vendor backorder items."""
@@ -1302,7 +1302,7 @@ def get_vendor_backorder_items(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_purchase_order(
-    ctx,
+    ctx: Context,
     vendor_code: Annotated[str, Field(description="Vendor code")],
     purchase_order_items: Annotated[list[dict] | None, Field(description="PO line items")] = None,
 ) -> str:
@@ -1317,7 +1317,7 @@ def create_purchase_order(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_purchase_order(
-    ctx,
+    ctx: Context,
     purchase_order_code: Annotated[str, Field(description="Purchase order code")],
 ) -> str:
     """Get purchase order details."""
@@ -1327,7 +1327,7 @@ def get_purchase_order(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def search_purchase_orders(
-    ctx,
+    ctx: Context,
     filters: Annotated[dict, Field(description="Search filters for purchase orders")],
 ) -> str:
     """Search purchase orders."""
@@ -1336,7 +1336,7 @@ def search_purchase_orders(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def approve_purchase_order(
-    ctx,
+    ctx: Context,
     purchase_order_code: Annotated[str, Field(description="Purchase order code to approve")],
 ) -> str:
     """Approve a purchase order."""
@@ -1345,7 +1345,7 @@ def approve_purchase_order(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_and_approve_purchase_order(
-    ctx,
+    ctx: Context,
     vendor_code: Annotated[str, Field(description="Vendor code")],
     user_id: Annotated[str, Field(description="Approving user ID")],
     purchase_order_items: Annotated[list[dict], Field(description="PO line items")],
@@ -1361,7 +1361,7 @@ def create_and_approve_purchase_order(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def close_purchase_order(
-    ctx,
+    ctx: Context,
     purchase_order_code: Annotated[str, Field(description="Purchase order code to close")],
 ) -> str:
     """Close a purchase order."""
@@ -1370,7 +1370,7 @@ def close_purchase_order(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_grn(
-    ctx,
+    ctx: Context,
     purchase_order_code: Annotated[str, Field(description="Purchase order code")],
 ) -> str:
     """Create a Goods Receipt Note (GRN) for a purchase order."""
@@ -1380,7 +1380,7 @@ def create_grn(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_grn(
-    ctx,
+    ctx: Context,
     inflow_receipt_code: Annotated[str, Field(description="GRN / inflow receipt code")],
 ) -> str:
     """Get GRN (Goods Receipt Note) details."""
@@ -1389,7 +1389,7 @@ def get_grn(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def add_item_to_grn(
-    ctx,
+    ctx: Context,
     inflow_receipt_code: Annotated[str, Field(description="GRN code")],
     inflow_receipt_item: Annotated[dict, Field(description="Item to add to the GRN")],
 ) -> str:
@@ -1403,7 +1403,7 @@ def add_item_to_grn(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def add_item_to_grn_by_code(
-    ctx,
+    ctx: Context,
     inflow_receipt_code: Annotated[str, Field(description="GRN code")],
     item_code: Annotated[str, Field(description="Item code to add")],
     manufacturing_date: Annotated[str | None, Field(description="Manufacturing date")] = None,
@@ -1420,7 +1420,7 @@ def add_item_to_grn_by_code(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def search_grns(
-    ctx,
+    ctx: Context,
     filters: Annotated[dict, Field(description="GRN search filters")],
 ) -> str:
     """Search Goods Receipt Notes."""
@@ -1434,7 +1434,7 @@ def search_grns(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def search_returns(
-    ctx,
+    ctx: Context,
     return_type: Annotated[str, Field(description="Return type (e.g. CUSTOMER_RETURN)")],
     updated_from: Annotated[str | None, Field(description="Updated from date")] = None,
     updated_to: Annotated[str | None, Field(description="Updated to date")] = None,
@@ -1457,7 +1457,7 @@ def search_returns(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_return(
-    ctx,
+    ctx: Context,
     shipment_code: Annotated[str | None, Field(description="Shipment code")] = None,
     reverse_pickup_code: Annotated[str | None, Field(description="Reverse pickup code")] = None,
 ) -> str:
@@ -1471,7 +1471,7 @@ def get_return(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_reverse_pickup(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     reverse_pick_items: Annotated[list[dict], Field(description="Items for reverse pickup")],
     action_code: Annotated[str, Field(description="Action code (default WAC = Warehouse Accepted)")] = "WAC",
@@ -1487,7 +1487,7 @@ def create_reverse_pickup(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def edit_reverse_pickup(
-    ctx,
+    ctx: Context,
     reverse_pickup_code: Annotated[str, Field(description="Reverse pickup code")],
     updates: Annotated[dict, Field(description="Fields to update")] = {},
 ) -> str:
@@ -1501,7 +1501,7 @@ def edit_reverse_pickup(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def approve_reverse_pickup(
-    ctx,
+    ctx: Context,
     reverse_pickup_codes: Annotated[list[str], Field(description="Reverse pickup codes to approve")],
 ) -> str:
     """Approve one or more reverse pickup requests."""
@@ -1511,7 +1511,7 @@ def approve_reverse_pickup(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True),
 )
 def cancel_reverse_pickup(
-    ctx,
+    ctx: Context,
     reverse_pickup_code: Annotated[str, Field(description="Reverse pickup code to cancel")],
 ) -> str:
     """Cancel a reverse pickup request."""
@@ -1520,7 +1520,7 @@ def cancel_reverse_pickup(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def allocate_courier_for_reverse_pickup(
-    ctx,
+    ctx: Context,
     reverse_pickup_codes: Annotated[list[str], Field(description="Reverse pickup codes")],
 ) -> str:
     """Allocate a courier for reverse pickup."""
@@ -1532,7 +1532,7 @@ def allocate_courier_for_reverse_pickup(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def mark_returned(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_items: Annotated[list[dict], Field(description="Items to mark as returned")],
     return_reason: Annotated[str, Field(description="Return reason")],
@@ -1548,7 +1548,7 @@ def mark_returned(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def mark_returned_with_inventory_type(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_items: Annotated[list[dict], Field(description="Items with inventory type info")],
 ) -> str:
@@ -1562,7 +1562,7 @@ def mark_returned_with_inventory_type(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_alternate_item(
-    ctx,
+    ctx: Context,
     sale_order_items: Annotated[list[dict], Field(description="Original sale order items")],
     sale_order_item_alternates: Annotated[list[dict], Field(description="Alternate item options")],
 ) -> str:
@@ -1576,7 +1576,7 @@ def create_alternate_item(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def accept_alternate_item(
-    ctx,
+    ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_codes: Annotated[list[str], Field(description="Item codes being replaced")],
     selected_alternate_item_sku: Annotated[str, Field(description="SKU of the selected alternate")],
@@ -1596,7 +1596,7 @@ def accept_alternate_item(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_gatepass(
-    ctx,
+    ctx: Context,
     type: Annotated[str, Field(description="Gatepass type")],
     party_code: Annotated[str, Field(description="Party (vendor/customer) code")],
     ws_gate_pass: Annotated[dict | None, Field(description="Additional gatepass data")] = None,
@@ -1612,7 +1612,7 @@ def create_gatepass(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def edit_gatepass(
-    ctx,
+    ctx: Context,
     gate_pass_code: Annotated[str, Field(description="Gatepass code")],
     ws_gate_pass: Annotated[dict | None, Field(description="Updated gatepass data")] = None,
 ) -> str:
@@ -1626,7 +1626,7 @@ def edit_gatepass(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def scan_gatepass_item(
-    ctx,
+    ctx: Context,
     gate_pass_code: Annotated[str, Field(description="Gatepass code")],
     item_code: Annotated[str, Field(description="Item code to scan")],
 ) -> str:
@@ -1640,7 +1640,7 @@ def scan_gatepass_item(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def add_nontraceable_gatepass_item(
-    ctx,
+    ctx: Context,
     gate_pass_code: Annotated[str, Field(description="Gatepass code")],
     item_sku: Annotated[str, Field(description="Item SKU")],
     inventory_type: Annotated[str, Field(description="Inventory type")],
@@ -1662,7 +1662,7 @@ def add_nontraceable_gatepass_item(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def remove_gatepass_item(
-    ctx,
+    ctx: Context,
     gate_pass_code: Annotated[str, Field(description="Gatepass code")],
     item_code: Annotated[str, Field(description="Item code to remove")],
 ) -> str:
@@ -1676,7 +1676,7 @@ def remove_gatepass_item(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def complete_gatepass(
-    ctx,
+    ctx: Context,
     gate_pass_code: Annotated[str, Field(description="Gatepass code to complete")],
 ) -> str:
     """Complete/finalize a gatepass."""
@@ -1686,7 +1686,7 @@ def complete_gatepass(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True),
 )
 def discard_gatepass(
-    ctx,
+    ctx: Context,
     gate_pass_code: Annotated[str, Field(description="Gatepass code to discard")],
 ) -> str:
     """Discard/cancel a gatepass."""
@@ -1696,7 +1696,7 @@ def discard_gatepass(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def search_gatepass(
-    ctx,
+    ctx: Context,
     from_date: Annotated[str, Field(description="Start date (yyyy-MM-dd)")],
     to_date: Annotated[str, Field(description="End date (yyyy-MM-dd)")],
 ) -> str:
@@ -1712,7 +1712,7 @@ def search_gatepass(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_gatepass(
-    ctx,
+    ctx: Context,
     gate_pass_codes: Annotated[list[str], Field(description="Gatepass codes to retrieve")],
 ) -> str:
     """Get details of one or more gatepasses."""
@@ -1726,7 +1726,7 @@ def get_gatepass(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def search_facilities(
-    ctx,
+    ctx: Context,
     from_date: Annotated[str, Field(description="Start date (yyyy-MM-dd)")],
     to_date: Annotated[str, Field(description="End date (yyyy-MM-dd)")],
     date_type: Annotated[str, Field(description="Date field to filter on")] = "CREATED",
@@ -1746,7 +1746,7 @@ def search_facilities(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_facility_details(
-    ctx,
+    ctx: Context,
     facility_code: Annotated[str, Field(description="Facility code")],
 ) -> str:
     """Get details of a specific facility/warehouse."""
@@ -1759,7 +1759,7 @@ def get_facility_details(
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
 def create_export_job(
-    ctx,
+    ctx: Context,
     export_job_type_name: Annotated[str, Field(description="Export job type (e.g. SALE_ORDER, INVENTORY)")],
     export_columns: Annotated[list[str], Field(description="Columns to include in the export")],
     export_filters: Annotated[list[dict] | None, Field(description="Optional filters for the export")] = None,
@@ -1786,7 +1786,7 @@ def create_export_job(
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True),
 )
 def get_export_job_status(
-    ctx,
+    ctx: Context,
     job_code: Annotated[str, Field(description="Export job code")],
 ) -> str:
     """Check the status of an export job."""
@@ -1795,7 +1795,7 @@ def get_export_job_status(
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True))
 def poll_export_job(
-    ctx,
+    ctx: Context,
     job_code: Annotated[str, Field(description="Export job code returned by create_export_job")],
     poll_interval: Annotated[int, Field(description="Seconds between status checks")] = 10,
     timeout: Annotated[int, Field(description="Maximum seconds to wait before giving up")] = 300,
@@ -1832,7 +1832,7 @@ def poll_export_job(
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, idempotentHint=True))
 def set_facility(
-    ctx,
+    ctx: Context,
     facility_code: Annotated[str | None, Field(description="Facility code to use for all subsequent calls. Pass null to clear and revert to the default.")] = None,
 ) -> str:
     """Set the default facility for all subsequent tool calls in this session. Overrides the UC_FACILITY environment variable. Pass null to clear."""
