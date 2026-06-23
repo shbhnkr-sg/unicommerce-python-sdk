@@ -175,6 +175,48 @@ _CACHE_IF: dict[str, object] = {
     "get_export_job_status": lambda data: data.get("status") in _TERMINAL_EXPORT_STATUSES,
 }
 
+# ---------------------------------------------------------------------------
+# Export job type metadata (discovered via API probing — no list endpoint)
+# ---------------------------------------------------------------------------
+
+_EXPORT_JOB_TYPES = {
+    # No filters required — status: works
+    "Inventory Snapshot": {"required_filters": [], "status": "works", "description": "Current inventory state across facilities"},
+    "Facility": {"required_filters": [], "status": "works", "description": "Facility/warehouse data and configuration"},
+    "Shelfwise Inventory": {"required_filters": [], "status": "works", "description": "Inventory by storage shelf location"},
+    "Vendor Item Master": {"required_filters": [], "status": "works", "description": "Vendor-item mapping master data"},
+
+    # Require specific named date filter — status: needs_ui_filter_ids
+    # (filter ID is tenant-specific and not discoverable via API; must be obtained from the Unicommerce web UI)
+    "Putaway": {"required_filters": ["Created in Date Range"], "status": "needs_ui_filter_ids", "description": "Putaway operations"},
+    "Shipping Package": {"required_filters": ["Added in Date Range"], "status": "needs_ui_filter_ids", "description": "Shipping package data"},
+    "Picklist": {"required_filters": ["In Date Range"], "status": "needs_ui_filter_ids", "description": "Picklist data"},
+    "Reverse Pickup": {"required_filters": ["Reverse Pickup Created Date Range"], "status": "needs_ui_filter_ids", "description": "Reverse pickup records"},
+    "Gatepass": {"required_filters": ["Created Date Range"], "status": "needs_ui_filter_ids", "description": "Gatepass records"},
+    "Invoice": {"required_filters": ["Created in Date Range"], "status": "needs_ui_filter_ids", "description": "Invoice data"},
+    "Deleted Entity": {"required_filters": ["Deleted Entity Date Range"], "status": "needs_ui_filter_ids", "description": "Deleted entity records"},
+    "Tally Return GST Report": {"required_filters": ["Returned in Date Range"], "status": "needs_ui_filter_ids", "description": "GST return report for Tally"},
+    "Tally Cancel GST Report": {"required_filters": ["Created in Date Range"], "status": "needs_ui_filter_ids", "description": "GST cancellation report for Tally"},
+    "Fastlane Courier Allocation Error Logs": {"required_filters": ["Time Stamp of Error"], "status": "needs_ui_filter_ids", "description": "Courier allocation error logs"},
+    "Courier Return Itemwise": {"required_filters": ["Sale Order Created In Date Range"], "status": "needs_ui_filter_ids", "description": "Item-wise courier return data"},
+    "Inventory Ledger": {"required_filters": ["Created Date Range"], "status": "needs_ui_filter_ids", "description": "Monthly stock ledger"},
+
+    # Require filter tag [1] — status: server_bug
+    # (any filter payload causes a Jackson deserialization error due to tag[1] servlet InputStream double-read bug)
+    "Sale Orders": {"required_filters": ["Added In Date Range (tag:1)", "Updated In Date Range (tag:1)"], "status": "server_bug", "description": "Sale order data export"},
+    "GRN": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "Goods received note data"},
+    "Purchase Orders": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "Purchase order data"},
+    "Sequence Detail": {"required_filters": ["Party Type (tag:1)"], "status": "server_bug", "description": "Sequence/numbering details"},
+    "Shipping Package Timeline": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "Shipping package timeline events"},
+    "Tally GST Report": {"required_filters": ["Date Range (tag:1)"], "status": "server_bug", "description": "GST dispatch report for Tally"},
+}
+
+_DATE_RANGE_PRESETS = [
+    "TODAY", "YESTERDAY", "LAST_WEEK", "LAST_MONTH", "THIS_MONTH",
+    "LAST_7_DAYS", "LAST_30_DAYS", "LAST_60_DAYS", "LAST_90_DAYS",
+    "LAST_QUARTER", "THIS_QUARTER",
+]
+
 _DTO_KEYS = frozenset({
     "saleOrderDTO", "itemTypeDTO", "facility",
     "shippingPackageDetailDTO", "inflowReceipt", "shippingManifest",
@@ -263,6 +305,7 @@ _register_domains("facilities", [
 ])
 _register_domains("export_jobs", [
     "create_export_job", "get_export_job_status", "poll_export_job",
+    "list_export_types",
 ])
 _register_domains("cache", ["clear_cache"])
 _register_domains("session", ["set_facility", "get_facility"])
@@ -391,6 +434,8 @@ mcp = FastMCP(
         "Read-only data is cached — use clear_cache if you suspect stale results. "
         "Use set_facility / get_facility to change the default facility for all calls. "
         "Use poll_export_job to wait for export jobs to complete instead of polling manually. "
+        "Use list_export_types or read exports://types to discover all 22 known export job "
+        "types, their required filters, and valid date range presets before creating exports. "
         "Check token://status for auth health, cache://stats for cache metrics, "
         "tools://catalog for a full tool listing grouped by domain."
     ),
@@ -460,6 +505,15 @@ def tool_catalog() -> str:
     return json.dumps(catalog, ensure_ascii=False)
 
 
+@mcp.resource("exports://types")
+def export_types() -> str:
+    """All known Unicommerce export job types with required filters."""
+    return json.dumps(
+        {"export_job_types": _EXPORT_JOB_TYPES, "date_range_presets": _DATE_RANGE_PRESETS},
+        ensure_ascii=False,
+    )
+
+
 # ===========================================================================
 # SALE ORDERS
 # ===========================================================================
@@ -492,9 +546,9 @@ def get_sale_order(
 )
 def search_sale_orders(
     ctx: Context,
-    filters: Annotated[dict, Field(description="Search filters — e.g. {\"statusCode\": \"CREATED\", \"channel\": \"SHOPIFY\"}")],
+    filters: Annotated[dict, Field(description="Search filters — requires \"fromDate\" and \"toDate\", e.g. {\"fromDate\": \"2024-01-01\", \"toDate\": \"2024-01-31\"}")],
 ) -> str:
-    """Search sale orders with flexible filters."""
+    """Search sale orders with filters. The filters dict is passed as **kwargs to the SDK. Required filters are fromDate and toDate (date strings). Note: statusCode and channel are not valid filter keys."""
     return _call(_client(ctx).sale_orders.search, **filters)
 
 
@@ -817,9 +871,9 @@ def get_product_by_item_code(
 )
 def search_products(
     ctx: Context,
-    filters: Annotated[dict, Field(description="Search filters — e.g. {\"skuCode\": \"SKU-*\", \"categoryCode\": \"ELECTRONICS\"}")],
+    filters: Annotated[dict, Field(description="Search filters — pass {} to return all products. Note: skuCode and categoryCode are not valid filter keys.")],
 ) -> str:
-    """Search products with flexible filters."""
+    """Search products. Pass an empty filters dict {} to return all products. Note: the API rejects skuCode and categoryCode as filter keys."""
     return _cached_call(_cache(ctx), "search_products", _client(ctx).products.search, **filters)
 
 
@@ -891,9 +945,9 @@ def get_shipping_package(
 )
 def search_shipping_packages(
     ctx: Context,
-    filters: Annotated[dict, Field(description="Search filters for shipping packages")],
+    filters: Annotated[dict, Field(description="Search filters — use \"updatedSinceInMinutes\" (int), e.g. {\"updatedSinceInMinutes\": 60}. Note: fromDate/toDate are not valid filters.")],
 ) -> str:
-    """Search shipping packages with filters."""
+    """Search shipping packages. Use the \"updatedSinceInMinutes\" filter (e.g. {\"updatedSinceInMinutes\": 60}). The API rejects fromDate/toDate filters."""
     return _call(_client(ctx).fulfillment.search_shipping_packages, **filters)
 
 
@@ -1004,12 +1058,14 @@ def create_invoice_by_sale_order(
     ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_item_codes: Annotated[list[str], Field(description="Item codes to invoice")],
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Create an invoice directly from sale order item codes."""
     return _call(
         _client(ctx).fulfillment.create_invoice_by_sale_order,
         sale_order_code=sale_order_code,
         sale_order_item_codes=sale_order_item_codes,
+        **(extra or {}),
     )
 
 
@@ -1018,12 +1074,14 @@ def create_invoice_with_details(
     ctx: Context,
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     invoice: Annotated[dict, Field(description="Invoice detail payload")],
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Create an invoice with custom details."""
     return _call(
         _client(ctx).fulfillment.create_invoice_with_details,
         sale_order_code=sale_order_code,
         invoice=invoice,
+        **(extra or {}),
     )
 
 
@@ -1031,11 +1089,13 @@ def create_invoice_with_details(
 def create_invoice_and_allocate_provider(
     ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Create invoice and allocate a shipping provider in one call."""
     return _call(
         _client(ctx).fulfillment.create_invoice_and_allocate_provider,
         shipping_package_code=shipping_package_code,
+        **(extra or {}),
     )
 
 
@@ -1085,11 +1145,13 @@ def check_serviceability(
 def allocate_shipping_provider(
     ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Allocate a shipping provider to a package."""
     return _call(
         _client(ctx).fulfillment.allocate_shipping_provider,
         shipping_package_code=shipping_package_code,
+        **(extra or {}),
     )
 
 
@@ -1188,9 +1250,14 @@ def dispatch_shipping_package(
 def force_dispatch_shipping_package(
     ctx: Context,
     shipping_package_code: Annotated[str, Field(description="Shipping package code")],
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Force dispatch a shipping package, bypassing normal validations."""
-    return _call(_client(ctx).fulfillment.force_dispatch, shipping_package_code=shipping_package_code)
+    return _call(
+        _client(ctx).fulfillment.force_dispatch,
+        shipping_package_code=shipping_package_code,
+        **(extra or {}),
+    )
 
 
 @mcp.tool( annotations=ToolAnnotations(readOnlyHint=False))
@@ -1315,12 +1382,14 @@ def create_purchase_order(
     ctx: Context,
     vendor_code: Annotated[str, Field(description="Vendor code")],
     purchase_order_items: Annotated[list[dict] | None, Field(description="PO line items")] = None,
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Create a new purchase order."""
     return _call(
         _client(ctx).inbound.create_purchase_order,
         vendor_code=vendor_code,
         purchase_order_items=purchase_order_items,
+        **(extra or {}),
     )
 
 
@@ -1359,6 +1428,7 @@ def create_and_approve_purchase_order(
     vendor_code: Annotated[str, Field(description="Vendor code")],
     user_id: Annotated[str, Field(description="Approving user ID")],
     purchase_order_items: Annotated[list[dict], Field(description="PO line items")],
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Create and immediately approve a purchase order."""
     return _call(
@@ -1366,6 +1436,7 @@ def create_and_approve_purchase_order(
         vendor_code=vendor_code,
         user_id=user_id,
         purchase_order_items=purchase_order_items,
+        **(extra or {}),
     )
 
 
@@ -1431,9 +1502,9 @@ def add_item_to_grn_by_code(
 )
 def search_grns(
     ctx: Context,
-    filters: Annotated[dict, Field(description="GRN search filters")],
+    filters: Annotated[dict, Field(description="GRN search filters — use \"purchaseOrderCode\", e.g. {\"purchaseOrderCode\": \"PO-123\"}. Note: fromDate/toDate are not valid filters.")],
 ) -> str:
-    """Search Goods Receipt Notes."""
+    """Search Goods Receipt Notes. Use the \"purchaseOrderCode\" filter (e.g. {\"purchaseOrderCode\": \"PO-123\"}). The API rejects fromDate/toDate filters."""
     return _call(_client(ctx).inbound.search_grns, **filters)
 
 
@@ -1445,14 +1516,14 @@ def search_grns(
 )
 def search_returns(
     ctx: Context,
-    return_type: Annotated[str, Field(description="Return type (e.g. CUSTOMER_RETURN)")],
+    return_type: Annotated[str, Field(description="Return type — use 'RTO' (not CUSTOMER_RETURN)")],
     updated_from: Annotated[str | None, Field(description="Updated from date")] = None,
     updated_to: Annotated[str | None, Field(description="Updated to date")] = None,
-    created_from: Annotated[str | None, Field(description="Created from date")] = None,
-    created_to: Annotated[str | None, Field(description="Created to date")] = None,
+    created_from: Annotated[str | None, Field(description="Created from date — required together with created_to")] = None,
+    created_to: Annotated[str | None, Field(description="Created to date — required together with created_from")] = None,
     status_code: Annotated[str | None, Field(description="Status filter")] = None,
 ) -> str:
-    """Search returns by type, date range, and status."""
+    """Search returns by type, date range, and status. The return_type should be 'RTO' (not CUSTOMER_RETURN). When filtering by creation date, both created_from and created_to must be provided together."""
     return _call(
         _client(ctx).returns.search,
         return_type=return_type,
@@ -1485,6 +1556,7 @@ def create_reverse_pickup(
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     reverse_pick_items: Annotated[list[dict], Field(description="Items for reverse pickup")],
     action_code: Annotated[str, Field(description="Action code (default WAC = Warehouse Accepted)")] = "WAC",
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Create a reverse pickup request for returned items."""
     return _call(
@@ -1492,6 +1564,7 @@ def create_reverse_pickup(
         sale_order_code=sale_order_code,
         reverse_pick_items=reverse_pick_items,
         action_code=action_code,
+        **(extra or {}),
     )
 
 
@@ -1546,6 +1619,7 @@ def mark_returned(
     sale_order_code: Annotated[str, Field(description="Sale order code")],
     sale_order_items: Annotated[list[dict], Field(description="Items to mark as returned")],
     return_reason: Annotated[str, Field(description="Return reason")],
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Mark sale order items as returned."""
     return _call(
@@ -1553,6 +1627,7 @@ def mark_returned(
         sale_order_code=sale_order_code,
         sale_order_items=sale_order_items,
         return_reason=return_reason,
+        **(extra or {}),
     )
 
 
@@ -1709,6 +1784,7 @@ def search_gatepass(
     ctx: Context,
     from_date: Annotated[str, Field(description="Start date (yyyy-MM-dd)")],
     to_date: Annotated[str, Field(description="End date (yyyy-MM-dd)")],
+    extra: Annotated[dict | None, Field(description="Additional optional API fields to pass through")] = None,
 ) -> str:
     """Search gatepasses within a date range."""
     return _cached_call(
@@ -1716,6 +1792,7 @@ def search_gatepass(
         _client(ctx).outbound.search_gatepass,
         from_date=from_date,
         to_date=to_date,
+        **(extra or {}),
     )
 
 
@@ -1737,12 +1814,12 @@ def get_gatepass(
 )
 def search_facilities(
     ctx: Context,
-    from_date: Annotated[str, Field(description="Start date (yyyy-MM-dd)")],
-    to_date: Annotated[str, Field(description="End date (yyyy-MM-dd)")],
+    from_date: Annotated[str, Field(description="Start date in ISO 8601 format, e.g. '2024-01-01T00:00:00.000Z'")],
+    to_date: Annotated[str, Field(description="End date in ISO 8601 format, e.g. '2024-12-31T23:59:59.000Z'")],
     date_type: Annotated[str, Field(description="Date field to filter on")] = "CREATED",
     facility_status: Annotated[str, Field(description="Status filter")] = "ALL",
 ) -> str:
-    """Search facilities within a date range."""
+    """Search facilities within a date range. Dates must be ISO 8601 with time, e.g. '2024-01-01T00:00:00.000Z'."""
     return _cached_call(
         _cache(ctx), "search_facilities",
         _client(ctx).facilities.search,
@@ -1834,6 +1911,20 @@ def poll_export_job(
             return json.dumps(data, default=str, ensure_ascii=False)
 
         time.sleep(poll_interval)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True, openWorldHint=False)
+)
+def list_export_types(ctx: Context) -> str:
+    """List all known export job type names with their required filters, API compatibility status, and descriptions.
+
+    Each entry includes a "status" field:
+    - "works": can be created via API without issues (no filters needed).
+    - "needs_ui_filter_ids": requires filter IDs that are tenant-specific and only obtainable from the Unicommerce web UI.
+    - "server_bug": broken on Unicommerce's server side (tag[1] servlet InputStream double-read bug causes Jackson deserialization errors).
+    """
+    return json.dumps(_EXPORT_JOB_TYPES, ensure_ascii=False)
 
 
 # ===========================================================================

@@ -19,7 +19,7 @@ class PurchaseOrderResponse(UnicommerceResponse):
     vendor_code: str | None = Field(None, alias="vendorCode")
     vendor_name: str | None = Field(None, alias="vendorName")
     status_code: str | None = Field(None, alias="statusCode")
-    created: str | None = Field(None, alias="created")
+    created: int | str | None = Field(None, alias="created")
     expiry_date: str | None = Field(None, alias="expiryDate")
     delivery_date: str | None = Field(None, alias="deliveryDate")
 
@@ -27,7 +27,7 @@ class PurchaseOrderResponse(UnicommerceResponse):
 class GrnResponse(UnicommerceResponse):
     code: str | None = Field(None, alias="code")
     status_code: str | None = Field(None, alias="statusCode")
-    created: str | None = Field(None, alias="created")
+    created: int | str | None = Field(None, alias="created")
     vendor_invoice_number: str | None = Field(None, alias="vendorInvoiceNumber")
     total_quantity: int | None = Field(None, alias="totalQuantity")
     vendor_code: str | None = Field(None, alias="vendorCode")

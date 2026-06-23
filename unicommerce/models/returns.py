@@ -5,8 +5,8 @@ from unicommerce.models.base import UnicommerceResponse
 
 class ReturnOrderSummary(UnicommerceResponse):
     code: str | None = Field(None, alias="code")
-    created: str | None = Field(None, alias="created")
-    updated: str | None = Field(None, alias="updated")
+    created: int | str | None = Field(None, alias="created")
+    updated: int | str | None = Field(None, alias="updated")
 
 
 class ReturnSearchResponse(UnicommerceResponse):
